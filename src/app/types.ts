@@ -1,0 +1,55 @@
+export interface User {
+   id: number; // Используем number, так как в PostgreSQL идентификаторы - это INTEGER
+   username: string;
+   email: string; // Поле email
+   profilePicture: string; // URL изображения профиля
+   walletBalance: number; // Баланс кошелька
+   level: number; // Уровень пользователя
+   xp: number; // Опыт пользователя
+   weeklyWinnings: number; // Недельные выигрыши
+   nextBonus: Date; // Дата следующего бонуса
+   fixedItem?: { // Опционально, если фиксированный предмет не установлен
+       image: string;
+       name: string;
+       description: string;
+       rarity: string; // Редкость предмета
+   };
+   inventory: BasicItem[]; // Массив предметов в инвентаре
+   hasUnreadNotifications: boolean; // Статус наличия непрочитанных уведомлений
+}
+
+export interface IMarketItem {
+   id: number; // Используем number, так как в PostgreSQL идентификаторы - это INTEGER
+   sellerId: {
+       id: number; // Идентификатор продавца
+       username: string; // Имя пользователя продавца
+   };
+   item: {
+       id: number; // Идентификатор предмета
+       name: string; // Название предмета
+       image: string; // URL изображения предмета
+       uniqueId: string; // Уникальный идентификатор предмета
+   };
+   price: number; // Цена предмета
+   itemName: string; // Название предмета для отображения
+   itemImage: string; // URL изображения предмета
+   uniqueId: string; // Уникальный идентификатор объявления
+   __v?: number; // Версия, если используется
+}
+
+export interface BasicItem {
+   caseId: number; // Идентификатор кейса
+   image: string; // URL изображения
+   name: string; // Название предмета
+   rarity: string; // Редкость предмета
+   id: number; // Идентификатор предмета
+   uniqueId: string; // Уникальный идентификатор
+}
+
+export interface Case {
+   id: number; // Идентификатор кейса
+   title: string; // Заголовок кейса
+   price: number; // Цена кейса
+   image: string; // URL изображения кейса
+   items: BasicItem[]; // Массив предметов в кейсе
+}
