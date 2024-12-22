@@ -1,12 +1,13 @@
-import { api } from '../../api'; // Импортируйте ваш api с fetchBaseQuery
+import { api } from '../../api';
+import { User } from '../../types'; // Импортируйте тип User
 
 export const userApi = api.injectEndpoints({
     endpoints: (builder) => ({
-        getUser:builder.query({
-            query: (id: string) => `/users/${id}`,
+        getUser:builder.query<User, string>({
+            query: (id) => `/users/${id}`,
         }),
-        getInventory: builder.query({
-            query: ({ id, page = 1, filters }: { id: string; page?: number; filters?: any }) => {
+        getInventory: builder.query<any, { id: string; page?: number; filters?: any }>({
+            query: ({ id, page = 1, filters }) => {
                 let url = `/users/inventory/${id}?page=${page}`;
                 if (filters) {
                     for (const key in filters) {
@@ -18,40 +19,40 @@ export const userApi = api.injectEndpoints({
                 return url;
             },
         }),
-        fixItem: builder.mutation({
-            query: (item: string) => ({
+        fixItem: builder.mutation<{ success: boolean }, string>({
+            query: (item) => ({
                 url: `/users/fixedItem/`,
                 method: 'PUT',
                 body: { item },
             }),
         }),
-        putFixDescription: builder.mutation({
-            query: (description: string) => ({
+        putFixDescription: builder.mutation<{ success: boolean }, string>({
+            query: (description) => ({
                 url: `/users/fixedItem/description`,
                 method: 'PUT',
                 body: { description },
             }),
         }),
-        claimBonus: builder.mutation({
+        claimBonus: builder.mutation<{ success: boolean }, void>({
             query: () => ({
                 url: `/users/claimBonus`,
                 method: 'POST',
             }),
         }),
-        updateProfilePicture: builder.mutation({
-            query: (image: string) => ({
+        updateProfilePicture: builder.mutation<{ success: boolean }, string>({
+            query: (image) => ({
                 url: `/users/profilePicture/`,
                 method: 'PUT',
                 body: { image },
             }),
         }),
-        getNotifications: builder.query({
+        getNotifications: builder.query<any, number>({
             query: (page = 1) => `/users/notifications?page=${page}`,
         }),
-        getTopPlayers: builder.query({
+        getTopPlayers: builder.query<any, void>({
             query: () => `/users/topPlayers`,
         }),
-        getMyRanking: builder.query({
+        getMyRanking: builder.query<any, void>({
             query: () => `/users/ranking`,
         }),
     }),

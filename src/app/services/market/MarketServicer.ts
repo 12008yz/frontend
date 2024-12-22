@@ -1,8 +1,9 @@
 import { api } from '../../api';
+import { IMarketItem } from '../../types'; // Импортируйте интерфейс IMarketItem
 
 export const marketplaceApi = api.injectEndpoints({
     endpoints: (builder) => ({
-        getItems: builder.query({
+        getItems: builder.query<IMarketItem[], { page: number; filters: any }>({
             query: ({ page, filters }) => {
                 const { name, rarity, sortBy, order } = filters;
                 return {
@@ -18,7 +19,7 @@ export const marketplaceApi = api.injectEndpoints({
                 };
             },
         }),
-        getItemListings: builder.query({
+        getItemListings: builder.query<IMarketItem[], { itemId: number; page: number }>({
             query: ({ itemId, page }) => ({
                 url: `/marketplace/item/${itemId}`,
                 params: {
@@ -27,20 +28,20 @@ export const marketplaceApi = api.injectEndpoints({
                 }
             }),
         }),
-        sellItem: builder.mutation({
+        sellItem: builder.mutation<{ success: boolean }, { item: IMarketItem; price: number }>({
             query: ({ item, price }) => ({
                 url: `/marketplace/`,
                 method: 'POST',
                 body: { item, price }
             }),
         }),
-        buyItem: builder.mutation({
+        buyItem: builder.mutation<{ success: boolean }, number>({
             query: (id) => ({
                 url: `/marketplace/buy/${id}`,
                 method: 'POST',
             }),
         }),
-        removeListing: builder.mutation({
+        removeListing: builder.mutation<{ success: boolean }, number>({
             query: (id) => ({
                 url: `/marketplace/${id}`,
                 method: 'DELETE',

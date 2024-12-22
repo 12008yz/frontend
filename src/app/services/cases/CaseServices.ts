@@ -1,11 +1,12 @@
-import { api } from '../../api'; // Импортируйте ваш api с fetchBaseQuery
+import { api } from '../../api';
+import { Case } from '../../types'; // Импортируйте интерфейс Case
 
 export const casesApi = api.injectEndpoints({
     endpoints: (builder) => ({
-        getCases: builder.query({
+        getCases: builder.query<Case[], void>({
             query: () => '/cases/',
         }),
-        getCase: builder.query({
+        getCase: builder.query<Case, number>({
             query: (id) => `/cases/${id}`,
         }),
     }),

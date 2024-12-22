@@ -1,9 +1,10 @@
 import { api } from '../../api';
 import { saveTokens, clearTokens } from '../../../features/authSlice';
+import { User } from '../../types'; // Импортируйте тип User, если он используется
 
 export const authApi = api.injectEndpoints({
     endpoints: (builder) => ({
-        login: builder.mutation({
+        login: builder.mutation<{ accessToken: string; refreshToken: string }, { email: string; password: string }>({
             query: ({ email, password }) => ({
                 url: '/users/login',
                 method: 'POST',
@@ -14,11 +15,11 @@ export const authApi = api.injectEndpoints({
                     const { data } = await queryFulfilled;
                     dispatch(saveTokens({ accessToken: data.accessToken, refreshToken: data.refreshToken }));
                 } catch (err) {
-                    console.error(err)
+                    console.error(err);
                 }
             },
         }),
-        register: builder.mutation({
+        register: builder.mutation<User, { email: string; password: string; username: string; profilePicture?: string }>({
             query: ({ email, password, username, profilePicture }) => ({
                 url: '/users/register',
                 method: 'POST',
@@ -30,10 +31,10 @@ export const authApi = api.injectEndpoints({
                 },
             }),
         }),
-        me: builder.query({
+        me: builder.query<User, void>({
             query: () => '/users/me',
         }),
-        refreshToken: builder.mutation({
+        refreshToken: builder.mutation<{ accessToken: string; refreshToken: string }, string>({
             query: (refreshToken) => ({
                 url: '/users/refresh-token',
                 method: 'POST',
