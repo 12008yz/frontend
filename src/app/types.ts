@@ -52,4 +52,16 @@ export interface Case {
    price: number; // Цена кейса
    image: string; // URL изображения кейса
    items: BasicItem[]; // Массив предметов в кейсе
+   user:User
 }
+
+export interface CaseOpeningItem {
+   caseImage: string; // URL изображения кейса
+   user: {
+     id: string; // Идентификатор пользователя
+     name: string; // Имя пользователя
+     profilePicture: string; // URL изображения профиля
+   };
+   winningItems: BasicItem[]; // Массив выигранных предметов
+ }
+

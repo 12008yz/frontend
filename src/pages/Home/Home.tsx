@@ -54,7 +54,7 @@ const Home = () => {
       },
       right: (
         <div className="hidden 2xl:flex 2xl:mr-36">
-          <img src={hero} alt="kanicasino" />
+          <img src={"hero"} alt="kanicasino" />
         </div>
       ),
     },

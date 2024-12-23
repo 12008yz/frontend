@@ -6,7 +6,7 @@ const AppRoutes = lazy(() => import("./Routes"));
 
 function App() {
   return (
-    <Router> {/* Оберните ваши маршруты в Router */}
+    <Router>
       <Suspense fallback={<div>Loading...</div>}>
         <AppRoutes />
       </Suspense>

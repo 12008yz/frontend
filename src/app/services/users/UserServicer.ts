@@ -33,7 +33,12 @@ export const userApi = api.injectEndpoints({
                 body: { description },
             }),
         }),
-        claimBonus: builder.mutation<{ success: boolean }, void>({
+        claimBonus: builder.mutation<{
+            success: boolean;
+            message: string; // Добавьте это поле
+            nextBonus: string; // Добавьте это поле
+            value: number; // Добавьте это поле
+        }, void>({
             query: () => ({
                 url: `/users/claimBonus`,
                 method: 'POST',
