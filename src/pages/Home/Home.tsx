@@ -8,7 +8,6 @@ import { toast } from "react-toastify";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import bitBG from '../../images/8bit.gif'
-import hero from '../../images/hero.png'
 import wallpaper from '../../images/wallpaper.jpg'
 import bg_repead from '../../images/bg_repeat.jpg'
 
@@ -47,7 +46,7 @@ const Home = () => {
     },
     {
       left: {
-        image: hero,
+        image: '',
         title: "hide",
         description: "Try your luck now!",
         link: "/slots",
@@ -61,8 +60,9 @@ const Home = () => {
   ];
 
   return (
-    <>
-      <Carousel
+    <div className=" flex justify-center">
+      <div className="flex-col w-full max-w-[1920px]">
+       <Carousel
         autoPlay={true}
         infiniteLoop={true}
         showThumbs={false}
@@ -89,7 +89,10 @@ const Home = () => {
       )}
       <GameListing name="Our Games" />
       <Leaderboard />
-    </>
+    </div>
+    </div>
+   
+     
   );
 };
 

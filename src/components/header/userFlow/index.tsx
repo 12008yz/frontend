@@ -1,23 +1,21 @@
-import { useState, useRef, useContext } from "react";
+import { useState, useRef } from "react";
 import Login from './Login'
 import SingUp from './SingUp'
 import './UserFlow.css'
-import UserContext from "../../../UserContext";
+import {useUserContext} from "../../../UserContext";
 import useOutsideClick from '../../../hooks/useOutsideClick'
 import Modal from '../../Modal'
 
 const UserFlow: React.FC =() => {
    const [isLogin, setIsLogin] = useState<boolean>(true)
-   const { toogleUserFlow } = useContext(UserContext)
+   const { toggleUserFlow } = useUserContext()
    const loginRef = useRef(null)
 
-   useOutsideClick(loginRef, () => {
-     toogleUserFlow(false)
-   })
+   
 
    return (
       <div ref={loginRef}>
-         <Modal open={true} setOpen={toogleUserFlow} width={'400px'}>
+         <Modal open={true} setOpen={toggleUserFlow} width={'400px'}>
          <div className="flex items-center justify-center p-8">
             <div className={`flex flex-col justify-center transition-all ${isLogin ? "h-[340px]" : "h-[380px]"
               }`}>

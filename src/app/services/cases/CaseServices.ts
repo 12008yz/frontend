@@ -7,7 +7,7 @@ export const casesApi = api.injectEndpoints({
             query: () => '/cases/',
         }),
         getCase: builder.query<Case, number>({
-            query: (id) => `/cases/${id}`,
+            query: (id) => `/case/${id}`,
         }),
     }),
 });

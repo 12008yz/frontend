@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux"; // Импортируем useDispatch
 import { useLoginMutation } from "../../../app/services/auth/auth"; // Импортируем хуки RTK Query
 import { saveTokens } from "../../../features/authSlice"; // Импортируем действие saveTokens
 import MainButton from "../../MainButton";
-import UserContext from "../../../UserContext";
+import {useUserContext} from "../../../UserContext";
 import { Tooltip } from "react-tooltip";
 import CryptoJS from 'crypto-js';
 
@@ -12,7 +12,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loadingButton, setLoadingButton] = useState(false);
-  const { toggleLogin } = useContext(UserContext);
+  const { toggleUserFlow } = useUserContext();
   const dispatch = useDispatch(); // Добавлено
 
   const [login] = useLoginMutation();
@@ -24,7 +24,7 @@ const LoginPage = () => {
       let encryptedPassword = encryptWithAES(password);
       const response = await login({ email, password: encryptedPassword }).unwrap();
       dispatch(saveTokens({ accessToken: response.accessToken, refreshToken: response.refreshToken }));
-      toggleLogin();
+      toggleUserFlow();
     } catch (error) {
       console.log(error);
       const errorMessage = (error as any).data?.message || "Invalid email or password.";
@@ -44,7 +44,7 @@ const LoginPage = () => {
       <div className="max-w-md w-full space-y-4">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
-            Sign in to your account
+            Войдите в аккаунт
           </h2>
         </div>
         {errorMessage && (
@@ -83,7 +83,7 @@ const LoginPage = () => {
          </div>
          <div>
          <MainButton
-              text="Sign in"
+              text="Войти"
               // eslint-disable-next-line @typescript-eslint/no-empty-function
               onClick={() => { }}
               disabled={loadingButton}

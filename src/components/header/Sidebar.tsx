@@ -6,8 +6,7 @@ import { FaHome } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { TbCat } from "react-icons/tb";
 import ClaimBonus from "./ClaimBonus";
-import { useContext } from "react";
-import UserContext from "../../UserContext";
+import {useUserContext} from "../../UserContext";
 import Monetary from "../Monetary";
 
 interface Sidebar {
@@ -15,7 +14,7 @@ interface Sidebar {
 }
 
 const Sidebar: React.FC<Sidebar> = ({ closeSidebar }) => {
-    const { userData } = useContext(UserContext);
+    const { user } = useUserContext();
 
 
     const links = [
@@ -78,10 +77,12 @@ const Sidebar: React.FC<Sidebar> = ({ closeSidebar }) => {
 
                         <div className="text-green-400 py-1 ">
                             Balance:{" "}
-                            <Monetary value={Math.floor(userData?.walletBalance)} />
+                            <Monetary value={user?.walletBalance ?? 0} />
                         </div>
 
-                        <ClaimBonus bonusDate={userData?.nextBonus} userData={userData} />
+                        {user && (
+    <ClaimBonus bonusDate={user.nextBonus} userData={user} />
+)}
                     </div>
                     <div className="flex flex-col space-y-4 mt-6">
                         {links.map((link, index) => (

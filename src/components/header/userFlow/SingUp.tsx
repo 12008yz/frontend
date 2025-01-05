@@ -1,7 +1,7 @@
-import React, { useContext, useState } from "react";
+import React, {  useState } from "react";
 import { useRegisterMutation } from "../../../app/services/auth/auth"; // Import the RTK query hook
 import MainButton from "../../MainButton";
-import UserContext from "../../../UserContext";
+import {useUserContext} from "../../../UserContext";
 import CryptoJS from 'crypto-js';
 
 const SignUpPage: React.FC = () => {
@@ -12,7 +12,7 @@ const SignUpPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   
-  const { toggleLogin } = useContext(UserContext);
+  const { toggleUserFlow } = useUserContext();
   const [register] = useRegisterMutation(); // Use the RTK query hook
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,7 +29,7 @@ const SignUpPage: React.FC = () => {
        profilePicture 
      }).unwrap();
      // Предполагается, что ответ содержит токены
-     toggleLogin();
+     toggleUserFlow();
    } catch (error: any) {
      console.log(error);
      setError(
@@ -111,7 +111,7 @@ const SignUpPage: React.FC = () => {
                 </div>
                 <div className="flex flex-col ">
                   <MainButton
-                    text="Sign up"
+                    text="Регистрация"
                     disabled={loading}
                     loading={loading}
                     onClick={() => { }}

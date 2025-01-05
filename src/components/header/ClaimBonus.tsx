@@ -1,15 +1,15 @@
 import { useClaimBonusMutation } from "../../app/services/users/UserServicer"; // Импортируйте хук для получения бонуса
 import { toast } from "react-toastify"; // Импортируйте toast для уведомлений
-import { useContext, useEffect, useState } from "react"; // Импортируйте необходимые хуки
-import UserContext from "../../UserContext"; // Импортируйте контекст пользователя
+import {useEffect, useState } from "react"; // Импортируйте необходимые хуки
+import {useUserContext} from "../../UserContext"; // Импортируйте контекст пользователя
 import MainButton from "../MainButton"; // Импортируйте кнопку
-import Countdown from "../Countdown"; // Импортируйте компонент обратного отсчета
+import Countdown from "../../components/Countdown"; // Импортируйте компонент обратного отсчета
 import { User } from "../../app/types"; // Импортируйте тип User
 
-const ClaimBonus: React.FC<{ bonusDate: string; userData: User }> = ({ bonusDate, userData }) => {
+const ClaimBonus: React.FC<{ bonusDate: Date; userData: User }> = ({ bonusDate, userData }) => {
     const [bonusAvailable, setBonusAvailable] = useState(false);
     const [loadingBonus, setLoadingBonus] = useState(false);
-    const { toogleUserFlow, toogleUserData } = useContext(UserContext); // Используйте контекст
+    const { toggleUserFlow, toggleUserData } = useUserContext(); 
     const [claimBonus] = useClaimBonusMutation(); // Используйте хук для получения бонуса
 
     useEffect(() => {
@@ -38,14 +38,14 @@ const ClaimBonus: React.FC<{ bonusDate: string; userData: User }> = ({ bonusDate
         setLoadingBonus(true);
         try {
             const res = await claimBonus().unwrap(); // Вызов функции claimBonus
-            toogleUserFlow(false); // Закрыть пользовательский интерфейс
+            toggleUserFlow(); // Закрыть пользовательский интерфейс
             setBonusAvailable(false); // Сбросить доступность бонуса
             toast.success("Бонус успешно получен!", {
                 theme: "dark",
             });
-            toogleUserData({
+            toggleUserData({
                 ...userData,
-                nextBonus: new Date(res.nextBonus), // Обновить дату следующего бонуса
+                nextBonus: new Date(res.nextBonus), 
                 walletBalance: userData.walletBalance + res.value // Обновить баланс
             });
         } catch (error: any) {
@@ -59,7 +59,7 @@ const ClaimBonus: React.FC<{ bonusDate: string; userData: User }> = ({ bonusDate
 
     return (
         <MainButton
-            text={bonusAvailable ? "Claim Bonus" : <Countdown nextBonus={bonusDate} color={"#fff"} bold={false} />}
+            text={bonusAvailable ? "Получить бонус" : <Countdown nextBonus={bonusDate} color={"#fff"} bold={false} />}
             onClick={handleClaimBonus}
             pulse={true}
             disabled={!bonusAvailable || loadingBonus} // Деактивировать кнопку, если бонус недоступен или идет загрузка

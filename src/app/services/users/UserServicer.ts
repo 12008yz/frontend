@@ -6,7 +6,7 @@ export const userApi = api.injectEndpoints({
         getUser:builder.query<User, string>({
             query: (id) => `/users/${id}`,
         }),
-        getInventory: builder.query<any, { id: string; page?: number; filters?: any }>({
+        getInventory: builder.query<any, { id: number; page?: number; filters?: any }>({
             query: ({ id, page = 1, filters }) => {
                 let url = `/users/inventory/${id}?page=${page}`;
                 if (filters) {

@@ -15,7 +15,7 @@ const CaseListing: React.FC<CaseListingProps> = ({
 }) => {
   return (
     <div className="w-full flex flex-col gap-4 py-10 items-center" key={name}>
-      <div className="flex flex-col items-center justify-center min-w-[1600px]">
+      <div className="flex flex-col items-center justify-center ">
         <Title title={name} />
         {description && <div className="text">{description}</div>}
         {

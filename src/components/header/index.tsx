@@ -1,7 +1,7 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import UserFlow from "./userFlow";
 import Navbar from "./Navbar/Navbar";
-import UserContext from "../../UserContext";
+import   {useUserContext}  from "../../UserContext";
 import { ImConnection } from "react-icons/im";
 import CaseOpenedNotification from "./CaseOpenedNotification";
 import { useNavigate } from "react-router-dom";
@@ -34,7 +34,7 @@ const Header: React.FC<Header> = ({ onlineUsers, notification, setNotification }
   const [openSidebar, setOpenSidebar] = useState<boolean>(false);
   const [ItemsQueue, setItemsQueue] = useState<ItemsQueue[]>([]);
 
-  const { isLogged, openUserFlow } = useContext(UserContext);
+  const { isLogged, openUserFlow } = useUserContext();;
   const navigate = useNavigate();
   const isHome = window.location.pathname === "/";
   
@@ -66,9 +66,9 @@ const Header: React.FC<Header> = ({ onlineUsers, notification, setNotification }
        items: opening.items,
        caseImages: [opening.image],
        user: {
-         id: opening.user.id, // Убедитесь, что это поле существует
-         name: opening.user.username, // Убедитесь, что это поле существует
-         profilePicture: opening.user.profilePicture, // Убедитесь, что это поле существует
+         id: opening.user.id, 
+         name: opening.user.username, 
+         profilePicture: opening.user.profilePicture, 
        },
      }));
      setItemsQueue(newItems);
@@ -76,7 +76,7 @@ const Header: React.FC<Header> = ({ onlineUsers, notification, setNotification }
  }, [recentCaseOpenings]);
 
   return (
-    <div className="flex flex-col p-4 w-screen justify-center ">
+    <div className="flex flex-col p-4 justify-center ">
       <div className="flex pb-2 items-center">
         {items.map((item, index) => (
           <div key={index} className="flex items-center gap-2 text-green-400 text-sm font-normal">
