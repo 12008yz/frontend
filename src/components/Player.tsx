@@ -5,13 +5,15 @@ import PlayerPreview from "./PlayerPreview";
 import { Link } from "react-router-dom";
 
 interface Player {
-    user: User
+    user: User | null // добавили null в тип User
     size: "small" | "medium" | "large" | "extra-large"
     direction?: "row" | "column",
     showLevel?: boolean
 }
 
 const Player: React.FC<Player> = ({ user, size, direction = "row", showLevel = "true" }) => {
+    if (!user) return null;
+    const userId = user && user.id;
     const [showPreview, setShowPreview] = useState<boolean>(false);
     const hoverTimeoutRef = useRef<any>(null);
 
@@ -32,6 +34,8 @@ const Player: React.FC<Player> = ({ user, size, direction = "row", showLevel = "
         setShowPreview(false);
     };
 
+    if (!user) return null; // добавили проверку на существование объекта user
+
     return (
         <div
             onMouseEnter={() => handleMouseEnter()}
@@ -44,7 +48,7 @@ const Player: React.FC<Player> = ({ user, size, direction = "row", showLevel = "
                     </div>
                 )
             }
-            <Link to={`/profile/${user.id}`}>
+            <Link to={`/profile/${userId}`}>
                 <div className={`flex items-center justify-center text-white ${direction == "row" ? "gap-4" : "flex-col"}`}>
                     <Avatar id={user.id} image={user.profilePicture} size={size} showLevel={!!showLevel} level={user.level} />
                     <span className="mt-2 font-semibold text-center">{user.username}</span>

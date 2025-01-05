@@ -77,7 +77,7 @@ const RightContent: React.FC<RightContentProps> = ({ loading, userData, openNoti
             <Avatar 
   image={userData?.profilePicture} 
   loading={loading} 
-  id={userData?.id.toString()} // Преобразование в строку
+  id={userData?.id} // Преобразование в строку
   size={isMobile ? "small" : "medium"} 
   level={userData?.level} 
   showLevel={true} 

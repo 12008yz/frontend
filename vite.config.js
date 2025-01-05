@@ -16,4 +16,7 @@ export default defineConfig({
     },
     cors: true,
   },
+  define: {
+    'process.env.VITE_PASSWORD_KEY': 'your_password_key_here',
+  },
 });
