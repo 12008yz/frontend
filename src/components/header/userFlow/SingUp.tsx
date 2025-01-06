@@ -2,13 +2,11 @@ import React, {  useState } from "react";
 import { useRegisterMutation } from "../../../app/services/auth/auth"; // Import the RTK query hook
 import MainButton from "../../MainButton";
 import {useUserContext} from "../../../UserContext";
-import CryptoJS from 'crypto-js';
 
 const SignUpPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nickname, setNickname] = useState("");
-  const [profilePicture, setProfilePicture] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   
@@ -21,12 +19,10 @@ const SignUpPage: React.FC = () => {
    setError(null); // Сброс состояния ошибки
  
    try {
-     let encryptedPassword = encryptWithAES(password);
      const response = await register({ 
        email, 
-       password: encryptedPassword, 
+       password, 
        username: nickname,
-       profilePicture 
      }).unwrap();
      // Предполагается, что ответ содержит токены
      toggleUserFlow();
@@ -40,13 +36,6 @@ const SignUpPage: React.FC = () => {
    }
  };
 
-  const encryptWithAES = (text: string) => {
-    const passphrase = import.meta.env.VITE_PASSWORD_KEY;
-    if (passphrase === undefined) {
-      throw new Error("Password key not found");
-    }
-    return CryptoJS.AES.encrypt(text, passphrase).toString();
-  };
 
   return (
     <div className="flex flex-col justify-center ">

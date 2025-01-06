@@ -46,7 +46,7 @@ const RightContent: React.FC<RightContentProps> = ({ loading, userData, openNoti
             {!loading && (
                 <div className="flex items-center gap-2 text-green-400 font-normal text-lg hover:text-green-300 transition-all ">
                     <BiWallet className="text-2xl hidden md:block " />
-                    <div className="max-w-[80px] md:max-w-[140px] overflow-hidden text-sm md:text-lg truncate ">
+                    <div className="max-w-[80px] md:max-w-[140px] overflow-hidden text-sm md:text-lg truncate">
                         <Monetary value={Math.floor(userData?.walletBalance)} />
                     </div>
                 </div>
@@ -75,13 +75,13 @@ const RightContent: React.FC<RightContentProps> = ({ loading, userData, openNoti
                 }
             </div>
             <Avatar 
-  image={userData?.profilePicture} 
-  loading={loading} 
-  id={userData?.id} // Преобразование в строку
-  size={isMobile ? "small" : "medium"} 
-  level={userData?.level} 
-  showLevel={true} 
-/>
+                image={userData?.profilePicture} 
+                loading={loading} 
+                id={userData?.id} // Преобразование в строку
+                size={isMobile ? "small" : "medium"} 
+                level={userData?.level} 
+                showLevel={true} 
+            />
             <div
                 className="text-[#625F7E] font-normal text-lg cursor-pointer hover:text-gray-200 transition-all "
                 onClick={Logout}

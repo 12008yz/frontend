@@ -1,11 +1,9 @@
-import React, { useContext, useState } from "react";
-import { useDispatch } from "react-redux"; // Импортируем useDispatch
-import { useLoginMutation } from "../../../app/services/auth/auth"; // Импортируем хуки RTK Query
-import { saveTokens } from "../../../features/authSlice"; // Импортируем действие saveTokens
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useLoginMutation } from "../../../app/services/auth/auth";
+import { saveTokens } from "../../../features/authSlice";
 import MainButton from "../../MainButton";
-import {useUserContext} from "../../../UserContext";
-import { Tooltip } from "react-tooltip";
-import CryptoJS from 'crypto-js';
+import { useUserContext } from "../../../UserContext";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -13,34 +11,35 @@ const LoginPage = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [loadingButton, setLoadingButton] = useState(false);
   const { toggleUserFlow } = useUserContext();
-  const dispatch = useDispatch(); // Добавлено
-
+  const dispatch = useDispatch();
   const [login] = useLoginMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    setLoadingButton(true);
     e.preventDefault();
+    setLoadingButton(true);
+    setErrorMessage("");
+
+    // Проверка заполненности полей
+    if (!email || !password) {
+      setErrorMessage("Пожалуйста, заполните все поля.");
+      setLoadingButton(false);
+      return;
+    }
+
     try {
-      let encryptedPassword = encryptWithAES(password);
-      const response = await login({ email, password: encryptedPassword }).unwrap();
+      const data = { email, password };
+      const response = await login(data).unwrap();
       dispatch(saveTokens({ accessToken: response.accessToken, refreshToken: response.refreshToken }));
-      toggleUserFlow();
+      toggleUserFlow(); // Обновление состояния пользователя
     } catch (error) {
-      console.log(error);
-      const errorMessage = (error as any).data?.message || "Invalid email or password.";
-      setErrorMessage(errorMessage);
+      console.error(error);
     } finally {
       setLoadingButton(false);
     }
   };
 
-  const encryptWithAES = (text: string) => {
-    const passphrase = import.meta.env.VITE_PASSWORD_KEY;
-    return CryptoJS.AES.encrypt(text, passphrase).toString();
-  };
-
   return (
-    <div className="flex items-center justify-center transition-all ">
+    <div className="flex items-center justify-center transition-all">
       <div className="max-w-md w-full space-y-4">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
@@ -48,54 +47,52 @@ const LoginPage = () => {
           </h2>
         </div>
         {errorMessage && (
-          <div className="text-center text-red-500 ">{errorMessage}</div>
+          <div className="text-center text-red-500">{errorMessage}</div>
         )}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              {[
-                {
-                  type: "email",
-                  name: "email",
-                  autoComplete: "email",
-                  required: true,
-                  value: email,
-                  onChange: (e: { target: { value: React.SetStateAction<string>; }; }) => setEmail(e.target.value),
-               },
-               {
-                 type: "password",
-                 name: "password",
-                 autoComplete: "current-password",
-                 required: true,
-                 value: password,
-                 onChange: (e: { target: { value: React.SetStateAction<string>; }; }) => setPassword(e.target.value),
-               },
-             ].map((inputProps, index) => (
-               <div key={index} className="mb-4">
-                 <input
-                   {...inputProps}
-                   className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                   placeholder={inputProps.name.charAt(0).toUpperCase() + inputProps.name.slice(1)}
-                 />
-               </div>
-             ))}
-           </div>
-         </div>
-         <div>
-         <MainButton
+            {[
+              {
+                type: "email",
+                name: "email",
+                autoComplete: "email",
+                required: true,
+                value: email,
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+                  setEmail(e.target.value),
+              },
+              {
+                type: "password",
+                name: "password",
+                autoComplete: "current-password",
+                required: true,
+                value: password,
+                onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+                  setPassword(e.target.value),
+              },
+            ].map((inputProps, index) => (
+              <div key={index} className="mb-4">
+                <input
+                  {...inputProps}
+                  className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder={inputProps.name.charAt(0).toUpperCase() + inputProps.name.slice(1)}
+                />
+              </div>
+            ))}
+          </div>
+          <div>
+            <MainButton
               text="Войти"
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
               onClick={() => { }}
               disabled={loadingButton}
               loading={loadingButton}
               submit
             />
-         </div>
-       </form>
-       <Tooltip id="tooltip" content="Forgot your password?" />
-     </div>
-   </div>
- );
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 };
 
 export default LoginPage;
