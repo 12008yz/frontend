@@ -4,7 +4,7 @@ import { Case } from '../../types'; // Импортируйте интерфей
 export const casesApi = api.injectEndpoints({
     endpoints: (builder) => ({
         getCases: builder.query<Case[], void>({
-            query: () => '/cases/',
+            query: () => '/case/',
         }),
         getCase: builder.query<Case, number>({
             query: (id) => `/case/${id}`,

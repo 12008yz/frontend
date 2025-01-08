@@ -60,20 +60,7 @@ const Header: React.FC<Header> = ({ onlineUsers, notification, setNotification }
     }
   }, [notification]);
 
-  useEffect(() => {
-   if (recentCaseOpenings.length > 0) {
-     const newItems = recentCaseOpenings.map((opening: Case) => ({
-       items: opening.items,
-       caseImages: [opening.image],
-       user: {
-         id: opening.user.id, 
-         name: opening.user.username, 
-         profilePicture: opening.user.profilePicture, 
-       },
-     }));
-     setItemsQueue(newItems);
-   }
- }, [recentCaseOpenings]);
+ 
 
   return (
     <div className="flex flex-col p-4 justify-center ">

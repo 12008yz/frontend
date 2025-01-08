@@ -52,7 +52,11 @@ export interface Case {
    price: number; // Цена кейса
    image: string; // URL изображения кейса
    items: BasicItem[]; // Массив предметов в кейсе
-   user:User
+   user: {
+      id: number;
+      username: string;
+      profilePicture: string;
+    };
 }
 
 export interface CaseOpeningItem {

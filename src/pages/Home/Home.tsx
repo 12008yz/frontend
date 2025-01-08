@@ -10,10 +10,11 @@ import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a lo
 import bitBG from '../../images/8bit.gif'
 import wallpaper from '../../images/wallpaper.jpg'
 import bg_repead from '../../images/bg_repeat.jpg'
+import { Case } from "../../app/types";
 
 const Home = () => {
   // Используйте хук для получения данных о кейсах
-  const { data: cases = [], error, isLoading } = useGetCasesQuery();
+  const { data: cases = [] as Case[], error, isLoading } = useGetCasesQuery();
 
   useEffect(() => {
     if (error) {
@@ -53,7 +54,7 @@ const Home = () => {
       },
       right: (
         <div className="hidden 2xl:flex 2xl:mr-36">
-          <img src={"hero"} alt="kanicasino" />
+          <img src='' alt="kanicasino" />
         </div>
       ),
     },
@@ -82,10 +83,14 @@ const Home = () => {
           <p className="text-white">Loading...</p>
         </div>
       ) : (
-        <CaseListing
-          name="Новые Кейсы"
-          cases={cases.length > 6 ? cases.slice(0, 6) : cases}
-        />
+        cases.length > 0 ? (
+          <CaseListing
+            name="Новые Кейсы"
+            cases={cases}
+          />
+        ) : (
+          <div>No cases found</div>
+        )
       )}
       <GameListing name="Our Games" />
       <Leaderboard />
