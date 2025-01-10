@@ -18,21 +18,22 @@ const LoginPage = () => {
     e.preventDefault();
     setLoadingButton(true);
     setErrorMessage("");
-
+  
     // Проверка заполненности полей
     if (!email || !password) {
       setErrorMessage("Пожалуйста, заполните все поля.");
       setLoadingButton(false);
       return;
     }
-
+  
     try {
       const data = { email, password };
       const response = await login(data).unwrap();
       dispatch(saveTokens({ accessToken: response.accessToken, refreshToken: response.refreshToken }));
       toggleUserFlow(); // Обновление состояния пользователя
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
+      setErrorMessage("Неправильный логин или пароль");
     } finally {
       setLoadingButton(false);
     }
