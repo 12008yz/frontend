@@ -26,6 +26,7 @@ const defaultRoutes = (
 )
 
 const AppRoutes = () => {
+  
    return (
      <Routes>
        {defaultRoutes}

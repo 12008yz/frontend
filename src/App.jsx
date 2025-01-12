@@ -16,7 +16,7 @@ function App() {
     <UserProvider Provider> {/* Используйте UserProvider как компонент */}
       <Router>
         <Suspense fallback={<div>Loading...</div>}>
-          <Header 
+          <Header
             onlineUsers={onlineUsers}
             recentCaseOpenings={recentCaseOpenings}
             notification={notification}

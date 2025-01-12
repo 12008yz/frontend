@@ -11,11 +11,18 @@ import bitBG from '../../images/8bit.gif'
 import wallpaper from '../../images/wallpaper.jpg'
 import bg_repead from '../../images/bg_repeat.jpg'
 import { Case } from "../../app/types";
+import { useUserContext } from "../../UserContext";
+import { useGetTopPlayersQuery } from "../../features/userSlice";
 
 const Home = () => {
   // Используйте хук для получения данных о кейсах
   const { data: cases = [] as Case[], error, isLoading } = useGetCasesQuery();
+  const { isLogged } = useUserContext();
 
+  if (isLogged) {
+    useGetCasesQuery();
+    useGetTopPlayersQuery();
+  }
   useEffect(() => {
     if (error) {
       toast.error("Error while connecting to the server");

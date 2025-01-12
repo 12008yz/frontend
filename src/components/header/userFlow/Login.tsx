@@ -29,7 +29,7 @@ const LoginPage = () => {
     try {
       const data = { email, password };
       const response = await login(data).unwrap();
-      dispatch(saveTokens({ accessToken: response.accessToken, refreshToken: response.refreshToken }));
+      dispatch(saveTokens({ accessToken: response.token, refreshToken: '' }));
       toggleUserFlow(); // Обновление состояния пользователя
     } catch (error: any) {
       console.error(error);
@@ -38,7 +38,7 @@ const LoginPage = () => {
       setLoadingButton(false);
     }
   };
-
+  
   return (
     <div className="flex items-center justify-center transition-all">
       <div className="max-w-md w-full space-y-4">
@@ -97,3 +97,4 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+

@@ -14,12 +14,12 @@ const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        saveTokens(state, action: PayloadAction<{ accessToken: string; refreshToken: string }>) {
+        saveTokens(state, action: PayloadAction<{ accessToken: string; refreshToken?: string }>) {
             state.accessToken = action.payload.accessToken;
-            state.refreshToken = action.payload.refreshToken;
+            state.refreshToken = action.payload.refreshToken || ''; // Если refreshToken не передан, используй пустую строку
             localStorage.setItem('accessToken', action.payload.accessToken);
-            localStorage.setItem('refreshToken', action.payload.refreshToken);
-        },
+            localStorage.setItem('refreshToken', action.payload.refreshToken || '');
+          },
         clearTokens(state) {
             state.accessToken = null;
             state.refreshToken = null;
