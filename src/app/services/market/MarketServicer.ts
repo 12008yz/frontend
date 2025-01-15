@@ -28,13 +28,13 @@ export const marketplaceApi = api.injectEndpoints({
                 }
             }),
         }),
-        sellItem: builder.mutation<{ success: boolean }, { item: IMarketItem; price: number }>({
-            query: ({ item, price }) => ({
-                url: `/marketplace/`,
-                method: 'POST',
-                body: { item, price }
-            }),
-        }),
+       sellItem: builder.mutation<{ success: boolean }, { item: IMarketItem; price: number }>({
+    query: ({ item, price }) => ({
+        url: `/marketplace/`,
+        method: 'POST',
+        body: { id: item.id, price } // Извлечение id из item
+    }),
+}),
         buyItem: builder.mutation<{ success: boolean }, number>({
             query: (id) => ({
                 url: `/marketplace/buy/${id}`,
