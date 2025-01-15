@@ -6,19 +6,23 @@ export const userApi = api.injectEndpoints({
         getUser:builder.query<User, string>({
             query: (id) => `/users/${id}`,
         }),
-        getInventory: builder.query<any, { id: number; page?: number; filters?: any }>({
+        getInventory: builder.query<{
+            items: any[];
+            currentPage: number;
+            totalPages: number;
+          }, { id: number; page?: number; filters?: any }>({
             query: ({ id, page = 1, filters }) => {
-                let url = `/users/inventory/${id}?page=${page}`;
-                if (filters) {
-                    for (const key in filters) {
-                        if (filters[key]) {
-                            url += `&${key}=${filters[key]}`;
-                        }
-                    }
+              let url = `/users/inventory/${id}?page=${page}`;
+              if (filters) {
+                for (const key in filters) {
+                  if (filters[key]) {
+                    url += `&${key}=${filters[key]}`;
+                  }
                 }
-                return url;
+              }
+              return url;
             },
-        }),
+          }),
         fixItem: builder.mutation<{ success: boolean }, string>({
             query: (item) => ({
                 url: `/users/fixedItem/`,
@@ -34,26 +38,32 @@ export const userApi = api.injectEndpoints({
             }),
         }),
         claimBonus: builder.mutation<{
-            success: boolean;
-            message: string; // Добавьте это поле
-            nextBonus: string; // Добавьте это поле
-            value: number; // Добавьте это поле
-        }, void>({
+            message: string;
+            nextBonus: string;
+            value: number;
+          }, void>({
             query: () => ({
-                url: `/users/claimBonus`,
-                method: 'POST',
+              url: `/users/claimBonus`,
+              method: 'POST',
             }),
-        }),
-        updateProfilePicture: builder.mutation<{ success: boolean }, string>({
+          }),
+          updateProfilePicture: builder.mutation<{ message: string }, string>({
             query: (image) => ({
-                url: `/users/profilePicture/`,
-                method: 'PUT',
-                body: { image },
+              url: `/users/profilePicture/`,
+              method: 'PUT',
+              body: { image },
             }),
-        }),
-        getNotifications: builder.query<any, number>({
-            query: (page = 1) => `/users/notifications?page=${page}`,
-        }),
+          }),
+        addItemToInventory: builder.mutation<any, { id: number }>({
+            query: ({ id }) => ({
+              url: `/users/inventory`,
+              method: 'POST',
+              body: { id },
+            }),
+          }),
+        getNotifications: builder.query<any, { id: number; page: number }>({
+            query: ({ id, page = 1 }) => `/users/notifications?page=${page}&receiverId=${id}`,
+          }),
         getTopPlayers: builder.query<any, void>({
             query: () => `/users/topPlayers`,
         }),

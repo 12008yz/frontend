@@ -7,6 +7,7 @@ import { IoMdExit } from "react-icons/io";
 import { BiWallet } from "react-icons/bi";
 import Monetary from "../../Monetary";
 import { User } from '../../../app/types';
+import { useUserContext } from '../../../UserContext';
 
 interface RightContentProps {
     loading: boolean;
@@ -18,8 +19,9 @@ interface RightContentProps {
 
 const RightContent: React.FC<RightContentProps> = ({ loading, userData, openNotifications, setOpenNotifications, Logout }) => {
     const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false)
+    console.log('userData RIGHT:', userData);
     const isMobile = window.innerWidth <= 768
-
+    console.log('userData:', userData);
     useEffect(() => {
         if (userData?.hasUnreadNotifications) {
             setHasUnreadNotifications(true)

@@ -10,9 +10,10 @@ const userSlice = createSlice({
         error: null as string | null, // Ошибка, если есть
     },
     reducers: {
-        setUser (state, action) {
+        setUser(state, action) {
+            console.log('setUser:', action.payload);
             state.user = action.payload;
-        },
+          },
         setLoading(state, action) {
             state.loading = action.payload;
         },

@@ -13,6 +13,7 @@ import { TbCat } from "react-icons/tb";
 import { toast } from "react-toastify";
 import { FaBars } from 'react-icons/fa';
 import RightContent from "./RightContent"; 
+import { setUser } from "../../../features/userSlice";
 
 interface NavbarProps {
   openNotifications: boolean;
@@ -26,6 +27,11 @@ const Navbar: React.FC<NavbarProps> = ({ openNotifications, setOpenNotifications
   const [loading, setLoading] = useState<boolean>(true);
 
   const { isLogged, toggleUserFlow, toggleUserData, user } = useUserContext();
+  console.log('openNotifications:', openNotifications);
+  console.log('setOpenNotifications:', setOpenNotifications);
+  console.log('openSidebar:', openSidebar);
+  console.log('setOpenSidebar:', setOpenSidebar);
+  console.log('ФОФОФ:', isLogged);
 
   const handleHover = () => {
     setIsHovering(!isHovering);
@@ -40,18 +46,7 @@ const Navbar: React.FC<NavbarProps> = ({ openNotifications, setOpenNotifications
     toggleUserData(null);
   };
 
-  const getUserInfo = async () => {
-    const { data, error } = useMeQuery(); // Используем RTK Query для получения информации о пользователе
-    if (data) {
-      toggleUserData(data);
-      setLoading(false);
-    } else {
-      console.log(error);
-      toast.error("Please, login again");
-      Logout();
-      setLoading(false);
-    }
-  };
+
 
   const links = [
     {
@@ -82,11 +77,10 @@ const Navbar: React.FC<NavbarProps> = ({ openNotifications, setOpenNotifications
   ];
 
   useEffect(() => {
-    if (isLogged) {
-      getUserInfo();
-      toggleUserFlow();
+    if (user) {
+      setUser(user);
     }
-  }, [isLogged]);
+  }, [user]);
 
   return (
     <div className="w-full flex justify-center">
@@ -142,7 +136,7 @@ const Navbar: React.FC<NavbarProps> = ({ openNotifications, setOpenNotifications
           {isLogged ? (
   <RightContent 
     loading={loading} 
-    userData={user!} // Использование оператора "!" для утверждения, что user не null
+    userData={user!} 
     openNotifications={openNotifications} 
     setOpenNotifications={setOpenNotifications} 
     Logout={Logout} 

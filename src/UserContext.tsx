@@ -1,5 +1,5 @@
 import { User } from "./app/types"; // Импортируем тип User
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 // Определение интерфейса для контекста
 interface UserContextType {
@@ -24,6 +24,19 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     const toggleUserFlow = () => {
         setOpenUserFlow(prev => !prev);
     };
+
+    useEffect(() => {
+        const token = localStorage.getItem('accessToken');
+        if (token) {
+          setIsLogged(true);
+        }
+      }, []);
+      useEffect(() => {
+        const token = localStorage.getItem('accessToken');
+        if (token) {
+          setIsLogged(true);
+        }
+      }, [localStorage.getItem('accessToken')]);
 
     // Функция для обновления данных пользователя
     const toggleUserData = (data: User | null) => {
