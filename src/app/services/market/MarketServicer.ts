@@ -32,15 +32,15 @@ export const marketplaceApi = api.injectEndpoints({
                 limit: 30,
               },
             }),
-          }),
-        sellItem: builder.mutation<IMarketItem, { item: IMarketItem; price: number }>({
+        }),
+        sellItem: builder.mutation<{ success: boolean }, { item: IMarketItem; price: number }>({
             query: ({ item, price }) => ({
-              url: `/marketplace/`,
-              method: 'POST',
-              body: { item, price },
+                url: `/marketplace/`,
+                method: 'POST',
+                body: { item, price }
             }),
-          }),
-          buyItem: builder.mutation<{ message: string }, number>({
+        }),
+        buyItem: builder.mutation<{ success: boolean }, number>({
             query: (id) => ({
               url: `/marketplace/buy/${id}`,
               method: 'POST',

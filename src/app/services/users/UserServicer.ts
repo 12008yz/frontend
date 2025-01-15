@@ -27,7 +27,7 @@ export const userApi = api.injectEndpoints({
             query: (item) => ({
                 url: `/users/fixedItem/`,
                 method: 'PUT',
-                body: { item },
+                body: { itemId: item },
             }),
         }),
         putFixDescription: builder.mutation<{ success: boolean }, string>({
@@ -38,10 +38,11 @@ export const userApi = api.injectEndpoints({
             }),
         }),
         claimBonus: builder.mutation<{
-            message: string;
-            nextBonus: string;
-            value: number;
-          }, void>({
+            success: boolean;
+            message: string; // Добавьте это поле
+            nextBonus: string; // Добавьте это поле
+            value: number; // Добавьте это поле
+        }, void>({
             query: () => ({
               url: `/users/claimBonus`,
               method: 'POST',
