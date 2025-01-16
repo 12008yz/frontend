@@ -30,8 +30,18 @@ export const authApi = api.injectEndpoints({
                 },
             }),
         }),
-        me: builder.query<User, void>({
-            query: () => '/users/me',
+        me: builder.query<{
+          id: number;
+          username: string;
+          profilePicture: string;
+          xp: number;
+          level: number;
+          walletBalance: number;
+          nextBonus: Date;
+          fixedItem: any;
+          hasUnreadNotifications: boolean;
+        }, void>({
+          query: () => '/users/me',
         }),
     }),
 });
