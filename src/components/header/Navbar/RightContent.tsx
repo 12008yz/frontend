@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react";
 import Avatar from "../../Avatar";
 import { FaRegBell } from "react-icons/fa";
 import { FaRegBellSlash } from "react-icons/fa";
@@ -17,79 +17,70 @@ interface RightContentProps {
 }
 
 const RightContent: React.FC<RightContentProps> = ({ loading, userData, openNotifications, setOpenNotifications, Logout }) => {
-    const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false)
-    const isMobile = window.innerWidth <= 768
+    const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
+    const isMobile = window.innerWidth <= 768;
 
     useEffect(() => {
         if (userData?.hasUnreadNotifications) {
-            setHasUnreadNotifications(true)
+            setHasUnreadNotifications(true);
         }
-    }, [userData?.hasUnreadNotifications])
+    }, [userData?.hasUnreadNotifications]);
 
     useEffect(() => {
         if (openNotifications) {
-            setHasUnreadNotifications(false)
+            setHasUnreadNotifications(false);
         }
-    }, [openNotifications])
+    }, [openNotifications]);
 
     return (
         <div className="flex items-center gap-4">
-            <div className="hidden md:flex ">
+            <div className="hidden md:flex">
                 {
                     !loading && (
-                        //button to claim bonus 
                         <ClaimBonus bonusDate={userData?.nextBonus} userData={userData} />
                     )
                 }
             </div>
 
             {!loading && (
-                <div className="flex items-center gap-2 text-green-400 font-normal text-lg hover:text-green-300 transition-all ">
-                    <BiWallet className="text-2xl hidden md:block " />
+                <div className="flex items-center gap-2 text-green-400 font-normal text-lg hover:text-green-300 transition-all">
+                    <BiWallet className="text-2xl hidden md:block" />
                     <div className="max-w-[80px] md:max-w-[140px] overflow-hidden text-sm md:text-lg truncate">
                         <Monetary value={Math.floor(userData?.walletBalance)} />
                     </div>
                 </div>
             )}
 
-            <div className="relative cursor-pointer" onClick={() => setOpenNotifications(!openNotifications)}
-            >
+            <div className="relative cursor-pointer" onClick={() => setOpenNotifications(!openNotifications)}>
                 {
                     openNotifications ? (
-                        <div>
-                            <FaRegBellSlash style={{
-                                fontSize: "20px",
-                            }} />
-                        </div>) : (
-                        <div>
-                            <FaRegBell style={{
-                                width: "20px",
-                            }} />
-                        </div>)
+                        <FaRegBellSlash style={{ fontSize: "20px" }} />
+                    ) : (
+                        <FaRegBell style={{ width: "20px" }} />
+                    )
                 }
                 {
                     hasUnreadNotifications && !openNotifications && (
-                        <div className="absolute -top-1 -right-[2px] w-3 h-3 bg-red-500 rounded-full " />
+                        <div className="absolute -top-1 -right-[2px] w-3 h-3 bg-red-500 rounded-full" />
                     )
-
                 }
             </div>
             <Avatar 
                 image={userData?.profilePicture} 
                 loading={loading} 
-                id={userData?.id} // Преобразование в строку
+                id={userData?.id} 
                 size={isMobile ? "small" : "medium"} 
                 level={userData?.level} 
                 showLevel={true} 
             />
             <div
-                className="text-[#625F7E] font-normal text-lg cursor-pointer hover:text-gray-200 transition-all "
+                className="text-[#625F7E] font-normal text-lg cursor-pointer hover:text-gray-200 transition-all"
                 onClick={Logout}
             >
                 <IoMdExit className="text-2xl" />
             </div>
         </div>
-    )
+    );
 }
 
-export default RightContent
+export default RightContent;

@@ -46,7 +46,7 @@ const ClaimBonus: React.FC<{ bonusDate: Date; userData: User }> = ({ bonusDate, 
             toggleUserData({
                 ...userData,
                 nextBonus: new Date(res.nextBonus), 
-                walletBalance: userData.walletBalance + res.value // Обновить баланс
+                walletBalance: userData.walletBalance + res.value
             });
         } catch (error: any) {
             toast.error(`${error.data?.message || "Ошибка получения бонуса!"}`, {

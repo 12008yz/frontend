@@ -1,36 +1,42 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useLoginMutation } from "../../../app/services/auth/auth";
+import { useLoginMutation, useLazyMeQuery } from "../../../app/services/auth/auth"; // Изменено
 import { saveTokens } from "../../../features/authSlice";
 import MainButton from "../../MainButton";
 import { useUserContext } from "../../../UserContext";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loadingButton, setLoadingButton] = useState(false);
-  const { toggleUserFlow } = useUserContext();
+  const { toggleUserFlow, toggleUserData } = useUserContext(); // Добавлено toggleUserData
   const dispatch = useDispatch();
-  const [login] = useLoginMutation();
+  const [login, {isLoading}] = useLoginMutation();
+  const [triggerMeQuery] = useLazyMeQuery(); // Используем useLazyMeQuery
+  const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoadingButton(true);
     setErrorMessage("");
-  
+
     // Проверка заполненности полей
     if (!email || !password) {
       setErrorMessage("Пожалуйста, заполните все поля.");
       setLoadingButton(false);
       return;
     }
-  
+
     try {
       const data = { email, password };
       const response = await login(data).unwrap();
-      dispatch(saveTokens({ accessToken: response.token, refreshToken: '' }));
-      toggleUserFlow(); // Обновление состояния пользователя
+      dispatch(saveTokens({ accessToken: response.token, refreshToken: '', user: response.user }));
+      await triggerMeQuery(response.user); // Запрос текущего пользователя
+      toggleUserData(response.user); // Обновление состояния пользователя
+      toggleUserFlow(); // Обновление состояния пользовательского интерфейса
+      console.log("Данные пользователя при входе", response.user)
     } catch (error: any) {
       console.error(error);
       setErrorMessage("Неправильный логин или пароль");
@@ -38,7 +44,7 @@ const LoginPage = () => {
       setLoadingButton(false);
     }
   };
-  
+
   return (
     <div className="flex items-center justify-center transition-all">
       <div className="max-w-md w-full space-y-4">
@@ -52,7 +58,7 @@ const LoginPage = () => {
         )}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
-            {[
+            {[ 
               {
                 type: "email",
                 name: "email",
@@ -97,4 +103,3 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
-

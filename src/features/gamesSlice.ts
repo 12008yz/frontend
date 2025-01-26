@@ -5,9 +5,9 @@ const gamesSlice = createSlice({
     name: 'games',
     initialState: {
         loading: false, // Состояние загрузки
-        error: null, // Ошибка, если есть
-        gameResults: null, // Результаты операций (например, открытие коробки)
-        selectedItem: null, // Выбранный предмет для улучшения
+        error: null as string | null, // Ошибка, если есть
+        gameResults: null as any, // Результаты операций (например, открытие коробки)
+        selectedItem: null as any, // Выбранный предмет для улучшения
     },
     reducers: {
         setLoading(state, action) {
@@ -23,6 +23,36 @@ const gamesSlice = createSlice({
             state.selectedItem = action.payload; // Установка выбранного предмета
         },
     },
+    extraReducers: (builder) => {
+        builder
+            .addMatcher(gamesApi.endpoints.openBox.matchFulfilled, (state, action) => {
+                state.gameResults = action.payload; // Успешное открытие коробки
+                state.loading = false;
+                state.error = null;
+            })
+            .addMatcher(gamesApi.endpoints.openBox.matchRejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || null; // Обработка ошибки
+            })
+            .addMatcher(gamesApi.endpoints.upgradeItem.matchFulfilled, (state, action) => {
+                // Обработка успешного улучшения предмета
+                state.loading = false;
+                state.error = null;
+            })
+            .addMatcher(gamesApi.endpoints.upgradeItem.matchRejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || null; // Обработка ошибки
+            })
+            .addMatcher(gamesApi.endpoints.spinSlots.matchFulfilled, (state, action) => {
+                // Обработка успешного вращения слотов
+                state.loading = false;
+                state.error = null;
+            })
+            .addMatcher(gamesApi.endpoints.spinSlots.matchRejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || null; // Обработка ошибки
+            });
+    }
 });
 
 // Экспортируйте редюсеры

@@ -16,7 +16,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 // Провайдер контекста
 const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [user, setUser ] = useState<User | null>(null); // Состояние пользователя
+    const [user, setUser] = useState<User | null>(null); // Состояние пользователя
     const [isLogged, setIsLogged] = useState<boolean>(false); // Статус входа
     const [openUserFlow, setOpenUserFlow] = useState<boolean>(false); // Статус открытия пользовательского интерфейса
 
@@ -26,15 +26,16 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     };
 
     // Функция для обновления данных пользователя
-    const toggleUserData = (data: User | null) => {
-        if (data) {
-            setUser (data);
-            setIsLogged(true); // Устанавливаем статус входа
-        } else {
-            setUser (null);
-            setIsLogged(false); // Устанавливаем статус входа
-        }
-    };
+  const toggleUserData = (data: User | null) => {
+    console.log('Обновление данных пользователя:', data); // Проверка данных
+    if (data) {
+        setUser(data);
+        setIsLogged(true); // Устанавливаем статус входа
+    } else {
+        setUser(null);
+        setIsLogged(false); // Устанавливаем статус входа
+    }
+};
 
     return (
         <UserContext.Provider value={{ user, setUser , toggleUserFlow, isLogged, openUserFlow, toggleUserData }}>

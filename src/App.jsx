@@ -2,7 +2,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { Suspense, lazy, useEffect, useState } from "react";
 import "react-tooltip/dist/react-tooltip.css";
 import "react-toastify/dist/ReactToastify.css";
-import { UserProvider, useUserContext } from "./UserContext"; 
+import { UserProvider } from "./UserContext"; 
 
 const Header = lazy(() => import("./components/header/index"));
 const AppRoutes = lazy(() => import("./Routes"));
@@ -13,15 +13,10 @@ function App() {
   const [notification, setNotification] = useState();
 
   return (
-    <UserProvider Provider> {/* Используйте UserProvider как компонент */}
+    <UserProvider> {/* Исправлено использование UserProvider */}
       <Router>
         <Suspense fallback={<div>Loading...</div>}>
-          <Header
-            onlineUsers={onlineUsers}
-            recentCaseOpenings={recentCaseOpenings}
-            notification={notification}
-            setNotification={setNotification}
-          />
+          <Header />
           <AppRoutes />
         </Suspense>
       </Router>

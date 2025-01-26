@@ -15,19 +15,19 @@ import { useUserContext } from "../../UserContext";
 import { useGetTopPlayersQuery } from "../../features/userSlice";
 
 const Home = () => {
-  // Используйте хук для получения данных о кейсах
   const { data: cases = [] as Case[], error, isLoading } = useGetCasesQuery();
   const { isLogged } = useUserContext();
 
-  if (isLogged) {
-    useGetCasesQuery();
-    useGetTopPlayersQuery();
-  }
   useEffect(() => {
     if (error) {
       toast.error("Error while connecting to the server");
     }
   }, [error]);
+
+  // Запросы для авторизованных пользователей
+  if (isLogged) {
+    useGetTopPlayersQuery();
+  }
 
   const BannerContent = [
     {
@@ -103,8 +103,6 @@ const Home = () => {
       <Leaderboard />
     </div>
     </div>
-   
-     
   );
 };
 

@@ -1,12 +1,10 @@
 export interface User {
    id: number; // Используем number, так как в PostgreSQL идентификаторы - это INTEGER
    username: string;
-   email: string; // Поле email
    profilePicture: string; // URL изображения профиля
    walletBalance: number; // Баланс кошелька
    level: number; // Уровень пользователя
    xp: number; // Опыт пользователя
-   weeklyWinnings: number; // Недельные выигрыши
    nextBonus: Date; // Дата следующего бонуса
    fixedItem?: { // Опционально, если фиксированный предмет не установлен
        image: string;
@@ -14,8 +12,8 @@ export interface User {
        description: string;
        rarity: string; // Редкость предмета
    };
-   inventory: BasicItem[]; // Массив предметов в инвентаре
    hasUnreadNotifications: boolean; // Статус наличия непрочитанных уведомлений
+   // Удалено поле token
 }
 
 export interface IMarketItem {
@@ -68,4 +66,3 @@ export interface CaseOpeningItem {
    };
    winningItems: BasicItem[]; // Массив выигранных предметов
  }
-

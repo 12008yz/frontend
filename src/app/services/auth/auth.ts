@@ -4,7 +4,7 @@ import { User } from '../../types'; // Импортируйте тип User, е�
 
 export const authApi = api.injectEndpoints({
     endpoints: (builder) => ({
-        login: builder.mutation<{ token: string }, { email: string; password: string }>({
+        login: builder.mutation<{ token: string; user: Omit<User, 'token'> }, { email: string; password: string }>({
             query: ({ email, password }) => ({
               url: '/users/login',
               method: 'POST',
@@ -13,12 +13,12 @@ export const authApi = api.injectEndpoints({
             async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
               try {
                 const { data } = await queryFulfilled;
-                dispatch(saveTokens({ accessToken: data.token, refreshToken: '' })); // Используй data.token
+                dispatch(saveTokens({ accessToken: data.token, refreshToken: '', user: data.user })); // Сохранение пользователя
               } catch (err) {
                 console.error(err);
               }
             },
-          }),
+        }),
         register: builder.mutation<User, { email: string; password: string; username: string; }>({
             query: ({ email, password, username }) => ({
                 url: '/users/register',
@@ -34,13 +34,13 @@ export const authApi = api.injectEndpoints({
           id: number;
           username: string;
           profilePicture: string;
-          xp: number;
-          level: number;
           walletBalance: number;
+          level: number;
+          xp: number;
           nextBonus: Date;
           fixedItem: any;
           hasUnreadNotifications: boolean;
-        }, void>({
+        }, User>({
           query: () => '/users/me',
         }),
     }),
@@ -51,4 +51,5 @@ export const {
     useLoginMutation,
     useRegisterMutation,
     useMeQuery,
+    useLazyMeQuery
 } = authApi;
