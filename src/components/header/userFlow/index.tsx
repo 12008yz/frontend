@@ -8,14 +8,14 @@ import Modal from '../../Modal'
 
 const UserFlow: React.FC =() => {
    const [isLogin, setIsLogin] = useState<boolean>(true)
-   const { toggleUserFlow } = useUserContext()
+   const { toggleUserFlow,openUserFlow } = useUserContext()
    const loginRef = useRef(null)
-
+   console.log("111111111111",openUserFlow)
    
 
    return (
       <div ref={loginRef}>
-         <Modal open={true} setOpen={toggleUserFlow} width={'400px'}>
+         <Modal open={openUserFlow} setOpen={toggleUserFlow} width={'400px'}>
          <div className="flex items-center justify-center p-8">
             <div className={`flex flex-col justify-center transition-all ${isLogin ? "h-[340px]" : "h-[380px]"
               }`}>

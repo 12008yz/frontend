@@ -22,6 +22,7 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 
     // Функция для переключения состояния пользовательского интерфейса
     const toggleUserFlow = () => {
+        console.log('toggleUserFlow вызван');
         setOpenUserFlow(prev => !prev);
     };
 

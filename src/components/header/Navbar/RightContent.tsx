@@ -7,16 +7,19 @@ import { IoMdExit } from "react-icons/io";
 import { BiWallet } from "react-icons/bi";
 import Monetary from "../../Monetary";
 import { User } from '../../../app/types';
+import { clearTokens } from "../../../features/authSlice"; // Импортируем функцию для очистки токенов
+import { useUserContext } from "../../../UserContext"; // Импортируем контекст пользователя
 
 interface RightContentProps {
     loading: boolean;
     userData: User;
     openNotifications: boolean;
     setOpenNotifications: React.Dispatch<React.SetStateAction<boolean>>;
-    Logout: () => void;
+    Logout: () => void; // Добавляем Logout в интерфейс
 }
 
-const RightContent: React.FC<RightContentProps> = ({ loading, userData, openNotifications, setOpenNotifications, Logout }) => {
+const RightContent: React.FC<RightContentProps> = ({ loading, userData, openNotifications, setOpenNotifications }) => {
+    const { toggleUserData } = useUserContext(); // Получаем функцию из контекста
     const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
     const isMobile = window.innerWidth <= 768;
 
@@ -31,6 +34,11 @@ const RightContent: React.FC<RightContentProps> = ({ loading, userData, openNoti
             setHasUnreadNotifications(false);
         }
     }, [openNotifications]);
+
+    const handleLogout = () => {
+        clearTokens(); // Очищаем токены
+        toggleUserData(null); // Обновляем данные пользователя в контексте
+    };
 
     return (
         <div className="flex items-center gap-4">
@@ -75,7 +83,7 @@ const RightContent: React.FC<RightContentProps> = ({ loading, userData, openNoti
             />
             <div
                 className="text-[#625F7E] font-normal text-lg cursor-pointer hover:text-gray-200 transition-all"
-                onClick={Logout}
+                onClick={handleLogout}
             >
                 <IoMdExit className="text-2xl" />
             </div>

@@ -11,7 +11,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loadingButton, setLoadingButton] = useState(false);
-  const { toggleUserFlow, toggleUserData } = useUserContext(); // Добавлено toggleUserData
+  const { toggleUserFlow } = useUserContext(); // Добавлено toggleUserData
   const dispatch = useDispatch();
   const [login, {isLoading}] = useLoginMutation();
   const [triggerMeQuery] = useLazyMeQuery(); // Используем useLazyMeQuery
@@ -34,8 +34,7 @@ const LoginPage = () => {
       const response = await login(data).unwrap();
       dispatch(saveTokens({ accessToken: response.token, refreshToken: '', user: response.user }));
       await triggerMeQuery(response.user); // Запрос текущего пользователя
-      toggleUserData(response.user); // Обновление состояния пользователя
-      toggleUserFlow(); // Обновление состояния пользовательского интерфейса
+      toggleUserFlow()
       console.log("Данные пользователя при входе", response.user)
     } catch (error: any) {
       console.error(error);

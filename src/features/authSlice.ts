@@ -53,6 +53,7 @@ const authSlice = createSlice({
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
             localStorage.removeItem('user'); // Удаление пользователя из localStorage
+            console.log('Clear Сработал! Пользователь:' , localStorage.getItem("user"))
         },
         setLoading(state, action) {
             state.loading = action.payload; // Установка состояния загрузки
