@@ -10,7 +10,6 @@ const UserFlow: React.FC =() => {
    const [isLogin, setIsLogin] = useState<boolean>(true)
    const { toggleUserFlow,openUserFlow } = useUserContext()
    const loginRef = useRef(null)
-   console.log("111111111111",openUserFlow)
    
 
    return (

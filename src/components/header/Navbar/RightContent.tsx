@@ -7,7 +7,8 @@ import { IoMdExit } from "react-icons/io";
 import { BiWallet } from "react-icons/bi";
 import Monetary from "../../Monetary";
 import { User } from '../../../app/types';
-import { clearTokens } from "../../../features/authSlice"; // Импортируем функцию для очистки токенов
+import { useDispatch } from 'react-redux'; // Импортируем useDispatch
+import { logout } from "../../../features/authSlice"; // Импортируем функцию logout
 import { useUserContext } from "../../../UserContext"; // Импортируем контекст пользователя
 
 interface RightContentProps {
@@ -15,37 +16,24 @@ interface RightContentProps {
     userData: User;
     openNotifications: boolean;
     setOpenNotifications: React.Dispatch<React.SetStateAction<boolean>>;
-    Logout: () => void; // Добавляем Logout в интерфейс
 }
 
 const RightContent: React.FC<RightContentProps> = ({ loading, userData, openNotifications, setOpenNotifications }) => {
+    const dispatch = useDispatch(); // Инициализируем dispatch
     const { toggleUserData } = useUserContext(); // Получаем функцию из контекста
     const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
     const isMobile = window.innerWidth <= 768;
 
-    useEffect(() => {
-        if (userData?.hasUnreadNotifications) {
-            setHasUnreadNotifications(true);
-        }
-    }, [userData?.hasUnreadNotifications]);
-
-    useEffect(() => {
-        if (openNotifications) {
-            setHasUnreadNotifications(false);
-        }
-    }, [openNotifications]);
-
     const handleLogout = () => {
-        clearTokens(); // Очищаем токены
-        toggleUserData(null); // Обновляем данные пользователя в контексте
+        dispatch(logout()); // Вызываем действие logout
     };
 
     return (
         <div className="flex items-center gap-4">
             <div className="hidden md:flex">
                 {
-                    !loading && (
-                        <ClaimBonus bonusDate={userData?.nextBonus} userData={userData} />
+                     !loading && userData && userData.nextBonus && (
+                        <ClaimBonus bonusDate={userData.nextBonus} userData={userData} />
                     )
                 }
             </div>

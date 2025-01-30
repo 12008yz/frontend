@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux"; 
 import MainButton from "../../MainButton"; 
-import { clearTokens,selectUser } from "../../../features/authSlice"; 
 import { useGetUserQuery } from "../../../app/services/users/UserServicer"; 
 import "react-loading-skeleton/dist/skeleton.css";
 import { MdOutlineSell } from "react-icons/md";
@@ -10,10 +9,10 @@ import { BsCoin } from "react-icons/bs";
 import { SlPlane } from "react-icons/sl";
 import { GiUpgrade } from 'react-icons/gi';
 import { TbCat } from "react-icons/tb";
-import { toast } from "react-toastify";
 import { FaBars } from 'react-icons/fa';
 import RightContent from "./RightContent"; 
 import { useUserContext } from "../../../UserContext"; // Импортируем контекст пользователя
+import { selectUser } from "../../../features/authSlice"; // Импортируем селектор пользователя
 
 interface NavbarProps {
   openNotifications: boolean;
@@ -24,7 +23,7 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ openSidebar, setOpenSidebar }) => {
   const [isHovering, setIsHovering] = useState<boolean>(false);
-  const { toggleUserFlow,toggleUserData } = useUserContext(); // Получаем функцию из контекста
+  const { toggleUserFlow } = useUserContext(); // Получаем функцию из контекста
 
   const user = useSelector(selectUser); // Получаем данные пользователя из состояния
   const isLogged = !!user; 
@@ -35,11 +34,6 @@ const Navbar: React.FC<NavbarProps> = ({ openSidebar, setOpenSidebar }) => {
 
   const toggleSidebar = () => {
     setOpenSidebar(!openSidebar);
-  };
-
-  const Logout = () => {
-    clearTokens();
-    toggleUserData(null);
   };
 
   return (
@@ -89,7 +83,7 @@ const Navbar: React.FC<NavbarProps> = ({ openSidebar, setOpenSidebar }) => {
           </div>
 
           {isLogged ? (
-            <RightContent loading={false} userData={user} openNotifications={false} setOpenNotifications={() => {}} Logout={Logout} />
+            <RightContent loading={false} userData={user} openNotifications={false} setOpenNotifications={() => {}} />
           ) : (
             <div className="flex items-center gap-4">
               <MainButton text="Sign In" onClick={toggleUserFlow} />

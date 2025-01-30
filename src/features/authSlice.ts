@@ -55,6 +55,15 @@ const authSlice = createSlice({
             localStorage.removeItem('user'); // Удаление пользователя из localStorage
             console.log('Clear Сработал! Пользователь:' , localStorage.getItem("user"))
         },
+        logout(state) { // Новое действие для выхода
+            state.accessToken = null;
+            state.refreshToken = null;
+            state.user = null; // Очистка информации о пользователе
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('user'); // Удаление пользователя из localStorage
+            console.log('Пользователь вышел из системы');
+        },
         setLoading(state, action) {
             state.loading = action.payload; // Установка состояния загрузки
         },
@@ -88,7 +97,7 @@ const authSlice = createSlice({
 });
 
 // Экспортируйте действия
-export const { saveTokens, clearTokens, setLoading, setError } = authSlice.actions;
+export const { saveTokens, clearTokens, logout, setLoading, setError } = authSlice.actions;
 
 // Экспортируйте редюсер
 export default authSlice.reducer;
