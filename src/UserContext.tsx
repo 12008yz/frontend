@@ -8,7 +8,6 @@ interface UserContextType {
     toggleUserFlow: () => void; // Функция для переключения состояния пользовательского интерфейса
     isLogged: boolean; // Статус входа пользователя
     openUserFlow: boolean; // Статус открытия пользовательского интерфейса
-    toggleUserData: (data: User | null) => void; // Функция для обновления данных пользователя
 }
 
 // Создание контекста
@@ -26,20 +25,8 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         setOpenUserFlow(prev => !prev);
     };
 
-    // Функция для обновления данных пользователя
-  const toggleUserData = (data: User | null) => {
-    console.log('Обновление данных пользователя:', data); // Проверка данных
-    if (data) {
-        setUser(data);
-        setIsLogged(true); // Устанавливаем статус входа
-    } else {
-        setUser(null);
-        setIsLogged(false); // Устанавливаем статус входа
-    }
-};
-
     return (
-        <UserContext.Provider value={{ user, setUser , toggleUserFlow, isLogged, openUserFlow, toggleUserData }}>
+        <UserContext.Provider value={{ user, setUser , toggleUserFlow, isLogged, openUserFlow }}>
             {children}
         </UserContext.Provider>
     );

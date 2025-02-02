@@ -87,18 +87,24 @@ const Header: React.FC<Header> = ({ onlineUsers, recentCaseOpenings, notificatio
   return (
     <div className="flex flex-col p-4 w-screen justify-center ">
       <div className="flex pb-2 items-center">
-        {items.map((item, index) => (
+{items.map((item, index) => (
           <div
             key={index}
             className="flex items-center gap-2 text-green-400 text-sm font-normal"
           >
             {item.icon}
-            <div>{item.value}</div>
+            <div className="font-bold">{item.value || 0}</div> {/* Отображаем 0, если значение отсутствует */}
             <div className="text-[#84819a] text-sm">{item.name}</div>
           </div>
         ))}
       </div>
-      <Navbar openNotifications={openNotifications} setOpenNotifications={setOpenNotifications} openSidebar={openSidebar} setOpenSidebar={setOpenSidebar} />
+      <Navbar 
+        openNotifications={openNotifications} 
+        setOpenNotifications={setOpenNotifications} 
+        openSidebar={openSidebar} 
+        setOpenSidebar={setOpenSidebar} 
+        onlineUsers={onlineUsers} // Передаем количество онлайн пользователей
+      />
       <div className="flex  items-center justify-center ">
         <div className="flex items-center justify-center relative w-full max-w-[1920px]">
           <div

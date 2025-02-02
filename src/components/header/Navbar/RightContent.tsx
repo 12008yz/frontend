@@ -8,7 +8,7 @@ import { BiWallet } from "react-icons/bi";
 import Monetary from "../../Monetary";
 import { User } from '../../../app/types';
 import { useDispatch } from 'react-redux'; // Импортируем useDispatch
-import { logout } from "../../../features/authSlice"; // Импортируем функцию logout
+import { logout, saveTokens } from "../../../features/authSlice"; // Импортируем функцию logout
 import { useUserContext } from "../../../UserContext"; // Импортируем контекст пользователя
 
 interface RightContentProps {
@@ -20,7 +20,6 @@ interface RightContentProps {
 
 const RightContent: React.FC<RightContentProps> = ({ loading, userData, openNotifications, setOpenNotifications }) => {
     const dispatch = useDispatch(); // Инициализируем dispatch
-    const { toggleUserData } = useUserContext(); // Получаем функцию из контекста
     const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
     const isMobile = window.innerWidth <= 768;
 

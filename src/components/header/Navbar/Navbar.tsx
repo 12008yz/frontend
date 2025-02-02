@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux"; 
 import MainButton from "../../MainButton"; 
-import { useGetUserQuery } from "../../../app/services/users/UserServicer"; 
 import "react-loading-skeleton/dist/skeleton.css";
 import { MdOutlineSell } from "react-icons/md";
 import { BsCoin } from "react-icons/bs";
@@ -15,6 +14,7 @@ import { useUserContext } from "../../../UserContext"; // Импортируем
 import { selectUser } from "../../../features/authSlice"; // Импортируем селектор пользователя
 
 interface NavbarProps {
+  onlineUsers: number; // Добавлено для получения количества онлайн пользователей
   openNotifications: boolean;
   setOpenNotifications: React.Dispatch<React.SetStateAction<boolean>>;
   openSidebar: boolean;
@@ -83,7 +83,10 @@ const Navbar: React.FC<NavbarProps> = ({ openSidebar, setOpenSidebar }) => {
           </div>
 
           {isLogged ? (
-            <RightContent loading={false} userData={user} openNotifications={false} setOpenNotifications={() => {}} />
+            <>
+              <span className="text-white">1 онлайн пользователь</span>
+              <RightContent loading={false} userData={user} openNotifications={false} setOpenNotifications={() => {}} />
+            </>
           ) : (
             <div className="flex items-center gap-4">
               <MainButton text="Sign In" onClick={toggleUserFlow} />

@@ -16,7 +16,8 @@ import { useGetTopPlayersQuery } from "../../features/userSlice";
 
 const Home = () => {
   const { data: cases = [] as Case[], error, isLoading } = useGetCasesQuery();
-  const { isLogged } = useUserContext();
+  const { isLogged } = useUserContext(); 
+  const { data: topPlayers } = useGetTopPlayersQuery(); // Переместим хук на верхний уровень
 
   useEffect(() => {
     if (error) {

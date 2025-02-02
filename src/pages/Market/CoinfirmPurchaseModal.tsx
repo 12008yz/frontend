@@ -4,6 +4,8 @@ import MainButton from "../../components/MainButton";
 import { toast } from "react-toastify";
 import { useUserContext } from "../../UserContext";
 import { IMarketItem, User } from "../../app/types";
+import { useDispatch } from "react-redux";
+import { saveTokens } from "../../features/authSlice"; // Импортируем saveTokens
 
 interface Props {
   item: IMarketItem;
@@ -19,32 +21,36 @@ const ConfirmPurchaseModal: React.FC<Props> = ({
   setRefresh,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const { user, toggleUserData } = useUserContext();
+  const { user } = useUserContext();
+  const dispatch = useDispatch(); // Инициализируем dispatch
   const [buyItem] = useBuyItemMutation();
 
   const handleConfirm = async () => {
-   setLoading(true);
-   try {
-     if (user) {
-       await buyItem(Number(item.id));
-       setRefresh && setRefresh(true);
-       toggleUserData({
-         ...user,
-         walletBalance: user.walletBalance - item.price,
-       } as User);
- 
-       toast.success("Purchase successful!");
-     } else {
-       console.error("User is null");
-     }
-   } catch (error: any) {
-     toast.error(error);
-     console.log(error);
-   } finally {
-     setLoading(false);
-     onClose();
-   }
- };
+    setLoading(true);
+    try {
+      if (user) {
+        await buyItem(Number(item.id));
+        setRefresh && setRefresh(true);
+        dispatch(saveTokens({
+          accessToken: '', // Укажите токен, если он доступен
+          user: {
+            ...user,
+            walletBalance: user.walletBalance - item.price,
+          } as User
+        })); // Обновляем состояние пользователя через Redux
+
+        toast.success("Purchase successful!");
+      } else {
+        console.error("User is null");
+      }
+    } catch (error: any) {
+      toast.error(error);
+      console.log(error);
+    } finally {
+      setLoading(false);
+      onClose();
+    }
+  };
 
   if (!isOpen) {
     return null;

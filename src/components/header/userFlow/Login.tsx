@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useLoginMutation, useLazyMeQuery } from "../../../app/services/auth/auth"; // Изменено
-import { saveTokens } from "../../../features/authSlice";
+import { saveTokens } from "../../../features/authSlice"; // Импортируем saveTokens
 import MainButton from "../../MainButton";
-import { useUserContext } from "../../../UserContext";
+import { useUserContext } from "../../../UserContext"; // Удаляем toggleUserData из импорта
 import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
@@ -11,11 +11,11 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loadingButton, setLoadingButton] = useState(false);
-  const { toggleUserFlow } = useUserContext(); // Добавлено toggleUserData
+  const { toggleUserFlow, isLogged } = useUserContext(); // Удаляем toggleUserData
   const dispatch = useDispatch();
-  const [login, {isLoading}] = useLoginMutation();
+  const [login, { isLoading }] = useLoginMutation();
   const [triggerMeQuery] = useLazyMeQuery(); // Используем useLazyMeQuery
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,10 +32,10 @@ const LoginPage = () => {
     try {
       const data = { email, password };
       const response = await login(data).unwrap();
-      dispatch(saveTokens({ accessToken: response.token, refreshToken: '', user: response.user }));
+      dispatch(saveTokens({ accessToken: response.token, refreshToken: '', user: response.user })); // Обновляем состояние пользователя через Redux
       await triggerMeQuery(response.user); // Запрос текущего пользователя
-      toggleUserFlow()
-      console.log("Данные пользователя при входе", response.user)
+      toggleUserFlow();
+      console.log("Данные пользователя при входе", response.user);
     } catch (error: any) {
       console.error(error);
       setErrorMessage("Неправильный логин или пароль");
