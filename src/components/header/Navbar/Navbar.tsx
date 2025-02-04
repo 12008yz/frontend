@@ -21,7 +21,7 @@ interface NavbarProps {
   setOpenSidebar: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ openSidebar, setOpenSidebar }) => {
+const Navbar: React.FC<NavbarProps> = ({ openSidebar, setOpenSidebar, openNotifications, setOpenNotifications }) => {
   const [isHovering, setIsHovering] = useState<boolean>(false);
   const { toggleUserFlow } = useUserContext(); // Получаем функцию из контекста
 
@@ -85,7 +85,7 @@ const Navbar: React.FC<NavbarProps> = ({ openSidebar, setOpenSidebar }) => {
           {isLogged ? (
             <>
               <span className="text-white">1 онлайн пользователь</span>
-              <RightContent loading={false} userData={user} openNotifications={false} setOpenNotifications={() => {}} />
+              <RightContent loading={false} userData={user} openNotifications={openNotifications} setOpenNotifications={setOpenNotifications} />
             </>
           ) : (
             <div className="flex items-center gap-4">

@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import useOutsideClick from '../../../hooks/useOutsideClick';
-import { useGetNotificationsQuery } from '../../../features/userSlice'; // Adjusted to use Redux slice
 import { RotatingLines } from 'react-loader-spinner';
 import moment from 'moment';
+import { useGetNotificationsQuery } from '../../../app/services/users/UserServicer'; // Импортируем новый хук
 
 interface NotificationsProps {
     openNotifications: boolean;
@@ -18,10 +18,9 @@ interface Notification {
 }
 
 const Notifications: React.FC<NotificationsProps> = ({ openNotifications, setOpenNotifications }) => {
-    const [notifications, setNotifications] = useState<Notification[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
     const notificationsRef = useRef(null);
-    const page = 1; // Define the page number you want to fetch
+    console.log("Состояние openNotifications:", openNotifications); // Логирование состояния
+    const { data: notifications = [], isLoading } = useGetNotificationsQuery(1); // Получаем уведомления для первой страницы
 
     const handleCloseNotifications = () => {
         setOpenNotifications(false);
@@ -29,24 +28,13 @@ const Notifications: React.FC<NotificationsProps> = ({ openNotifications, setOpe
 
     useOutsideClick(notificationsRef, handleCloseNotifications);
 
-    // Using Redux query to fetch notifications
-    const { data: fetchedNotifications, isLoading } = useGetNotificationsQuery(page); // Pass the page number
-
-    useEffect(() => {
-        if (fetchedNotifications) {
-            setNotifications(fetchedNotifications);
-            setLoading(false);
-        }
-    }, [fetchedNotifications]);
-
     return (
         <div className={`bg-[#19172d] rounded absolute z-50 top-1 md:right-10 w-full md:w-80 min-h-[400px] ${openNotifications ? 'flex flex-col' : 'hidden'}`} ref={notificationsRef}>
             {
-                loading || isLoading ?
-                    <div className="flex justify-center items-center h-96">
-                        <p className="text-white">
-                            <RotatingLines strokeColor='#c3c4d9' width='50' />
-                        </p>
+                isLoading ?
+                    <div className="flex justify-center items-center h-96"> <p className="text-white">
+                        <RotatingLines strokeColor='#c3c4d9' width='50' />
+                    </p>
                     </div>
                     :
                     notifications.length > 0 ? (

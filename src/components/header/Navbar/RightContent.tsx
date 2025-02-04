@@ -8,8 +8,10 @@ import { BiWallet } from "react-icons/bi";
 import Monetary from "../../Monetary";
 import { User } from '../../../app/types';
 import { useDispatch } from 'react-redux'; // Импортируем useDispatch
-import { logout, saveTokens } from "../../../features/authSlice"; // Импортируем функцию logout
+import { logout } from "../../../features/authSlice"; // Импортируем функцию logout
 import { useUserContext } from "../../../UserContext"; // Импортируем контекст пользователя
+import { useGetNotificationsQuery } from '../../../app/services/users/UserServicer'; // Импортируем хук для получения уведомлений
+import Notifications from './Notitfications'; // Импортируем компонент уведомлений
 
 interface RightContentProps {
     loading: boolean;
@@ -23,11 +25,20 @@ const RightContent: React.FC<RightContentProps> = ({ loading, userData, openNoti
     const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
     const isMobile = window.innerWidth <= 768;
 
+    const { data: notifications = [] } = useGetNotificationsQuery(1); // Получаем уведомления для первой страницы
+
+    useEffect(() => {
+        // Проверяем наличие непрочитанных уведомлений
+        const unreadCount = notifications.filter((notification: { read: boolean }) => !notification.read).length;
+        setHasUnreadNotifications(unreadCount > 0);
+    }, [notifications]);
+
     const handleLogout = () => {
         dispatch(logout()); // Вызываем действие logout
     };
 
-    return (
+    return ( 
+        <>
         <div className="flex items-center gap-4">
             <div className="hidden md:flex">
                 {
@@ -46,7 +57,10 @@ const RightContent: React.FC<RightContentProps> = ({ loading, userData, openNoti
                 </div>
             )}
 
-            <div className="relative cursor-pointer" onClick={() => setOpenNotifications(!openNotifications)}>
+            <div className="relative cursor-pointer" onClick={() => {
+                console.log("Текущие уведомления:", openNotifications);
+                setOpenNotifications(!openNotifications);
+            }}>
                 {
                     openNotifications ? (
                         <FaRegBellSlash style={{ fontSize: "20px" }} />
@@ -59,6 +73,7 @@ const RightContent: React.FC<RightContentProps> = ({ loading, userData, openNoti
                         <div className="absolute -top-1 -right-[2px] w-3 h-3 bg-red-500 rounded-full" />
                     )
                 }
+                <Notifications openNotifications={openNotifications} setOpenNotifications={setOpenNotifications} />
             </div>
             <Avatar 
                 image={userData?.profilePicture} 
@@ -75,6 +90,7 @@ const RightContent: React.FC<RightContentProps> = ({ loading, userData, openNoti
                 <IoMdExit className="text-2xl" />
             </div>
         </div>
+        </>
     );
 }
 

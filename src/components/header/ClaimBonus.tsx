@@ -45,7 +45,7 @@ const ClaimBonus: React.FC<{ bonusDate: Date; userData: User }> = ({ bonusDate, 
                 theme: "dark",
             });
             dispatch(saveTokens({
-                accessToken: '', // Укажите токен, если он доступен
+                accessToken: localStorage.getItem('accessToken') || '', // Получаем токен из localStorage, если null, передаем пустую строку
                 user: {
                     ...userData,
                     nextBonus: new Date(res.nextBonus), 
