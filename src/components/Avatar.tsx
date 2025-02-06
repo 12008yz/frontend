@@ -3,7 +3,7 @@ import Skeleton from "react-loading-skeleton";
 import { Link } from "react-router-dom";
 
 interface Avatar {
-    image: string;
+    image: string; // используйте изображения из public/image
     id: number;
     size: 'small' | 'medium' | 'large' | 'extra-large';
     loading?: boolean;

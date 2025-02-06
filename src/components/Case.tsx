@@ -4,7 +4,7 @@ import Monetary from './Monetary';
 
 interface CaseProps {
   title: string;
-  image: string | null; // добавьте null в тип image
+  image: string | null; // добавьте null в тип image, используйте изображения из public/image
   price: number;
 }
 

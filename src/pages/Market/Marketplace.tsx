@@ -31,7 +31,6 @@ interface ItemData {
 
 const Marketplace: React.FC<ItemData> = () => {
   const [items, setItems] = useState<IMarketItem[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const [openSellModal, setOpenSellModal] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
@@ -45,7 +44,7 @@ const Marketplace: React.FC<ItemData> = () => {
 
   const { isLogged } = useUserContext();
 
-  const { data: itemsData, isLoading, isFetching } = useGetItemsQuery({ page, filters });
+  const { data: itemsData } = useGetItemsQuery({ page, filters });
 
   useEffect(() => {
     if (itemsData) {
@@ -64,9 +63,6 @@ const Marketplace: React.FC<ItemData> = () => {
     scrollTo(0, 0);
   }, [page]);
 
-  useEffect(() => {
-    setLoading(isLoading || isFetching);
-  }, [isLoading, isFetching]);
 
   return (
     <div className="flex flex-col items-center justify-center ">
@@ -105,7 +101,7 @@ const Marketplace: React.FC<ItemData> = () => {
           <Pagination totalPages={Math.ceil(items.length / 10)} currentPage={page} setPage={setPage} />
         )
       }
-      {loading ? (
+      
         <div className="flex flex-wrap items-center gap-4 justify-center px-8 ">
           {Array(10)
             .fill(0)
@@ -124,7 +120,6 @@ const Marketplace: React.FC<ItemData> = () => {
             />
           ))}
         </div>
-      )}
       {
         items.length > 0 && (
           <Pagination totalPages={Math.ceil(items.length / 10)} currentPage={page} setPage={setPage} />

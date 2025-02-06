@@ -7,13 +7,14 @@ import Leaderboard from "./Leaderboard";
 import { toast } from "react-toastify";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
-import bitBG from '../../images/8bit.gif'
-import wallpaper from '../../images/wallpaper.jpg'
-import bg_repead from '../../images/bg_repeat.jpg'
 import { Case } from "../../app/types";
 import { useUserContext } from "../../UserContext";
 import { useGetTopPlayersQuery } from "../../features/userSlice";
-
+import crashBanner from '../../images/crashBanner.webp'
+import marisaBanner from '../../images/marisaBanner.png'
+import paris from '../../images/paris.webp'
+import homeBanner from '../../images/homeBanner.webp'
+import KANICASINO from '../../images/KANICASINO.webp'
 const Home = () => {
   const { data: cases = [] as Case[], error, isLoading } = useGetCasesQuery();
   const { isLogged } = useUserContext(); 
@@ -33,20 +34,20 @@ const Home = () => {
   const BannerContent = [
     {
       left: {
-        image: wallpaper,
+        image: marisaBanner,
         title: "CRASH GAME",
         description: "Не сгорай, лети высоко! Испытай свою удачу прямо сейчас!",
         link: "/crash",
       },
       right: (
         <div>
-          <img src={bg_repead} alt="upgrade" />
+          <img src={crashBanner} alt="upgrade" />
         </div>
       ),
     },
     {
       left: {
-        image: bitBG,
+        image: paris,
         title: "NEW UPGRADE GAME",
         description: "Go big or go home. Try your luck now!",
         link: "/upgrade",
@@ -55,14 +56,14 @@ const Home = () => {
     },
     {
       left: {
-        image: '',
+        image: homeBanner,
         title: "hide",
         description: "Try your luck now!",
         link: "/slots",
       },
       right: (
         <div className="hidden 2xl:flex 2xl:mr-36">
-          <img src='' alt="kanicasino" />
+          <img src={KANICASINO} alt="kanicasino" />
         </div>
       ),
     },
