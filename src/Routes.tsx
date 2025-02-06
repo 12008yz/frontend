@@ -1,6 +1,6 @@
 import { Route, Routes, Navigate } from "react-router-dom";
 import Home from "./pages/Home/Home";
-// import Profile from "./pages/Profile/Profile";
+import Profile from "./pages/Profile/Profile";
 // import CasePage from "./pages/CasePage/CasePage";
 // import Marketplace from "./pages/Market/Marketplace";
 // import CoinFlip from "./pages/Coin/CoinFlip";
@@ -12,12 +12,12 @@ import ItemPage from "./pages/Market/ItemPage";
 
 const defaultRoutes = (
    <>
-   <Route path="/" element={<Home />} />
-   {/* <Route path="/marketplace" element={<Marketplace totalPages={0} currentPage={0} items={[]} />} />  */}
-   {/* <Route path="/profile/:id" element={<Profile />} />
-    <Route path="/case/:id" element={<CasePage />} /> */}
+    <Route path="/" element={<Home />} />
+    <Route path="/profile/:id" element={<Profile />} />
     <Route path="/marketplace/item/:itemId" element={<ItemPage/>} />
-    {/* <Route path="/coinflip" element={<CoinFlip />} />
+    {/* <Route path="/marketplace" element={<Marketplace totalPages={0} currentPage={0} items={[]} />} />  
+    <Route path="/case/:id" element={<CasePage />} />
+    <Route path="/coinflip" element={<CoinFlip />} />
     <Route path="/crash" element={<CrashGame />} />
     <Route path="/upgrade" element={<Upgrade />} />
     <Route path="/slot" element={<Slot />} />

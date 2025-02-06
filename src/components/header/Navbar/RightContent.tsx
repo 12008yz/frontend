@@ -26,7 +26,7 @@ const RightContent: React.FC<RightContentProps> = ({ loading, userData, openNoti
     const isMobile = window.innerWidth <= 768;
 
     const { data: notifications = [] } = useGetNotificationsQuery(1); // Получаем уведомления для первой страницы
-
+    console.log("User Data: RIGHT CONTENT", userData);
     useEffect(() => {
         // Проверяем наличие непрочитанных уведомлений
         const unreadCount = notifications.filter((notification: { read: boolean }) => !notification.read).length;

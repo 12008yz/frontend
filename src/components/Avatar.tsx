@@ -73,20 +73,19 @@ const Avatar: React.FC<Avatar> = ({ image, loading, id, size, level, showLevel =
             break;
     }
 
-
     return (
-        <div className="min-w-[48px] ">
-            {loading ? (
-                <Skeleton
-                    circle={true}
-                    height={skeletonSize}
-                    width={skeletonSize}
-                    highlightColor="#161427"
-                    baseColor="#1c1a31"
-                />
-            ) : (
-                <Link to={`/profile/${id}`}>
-                    {!loaded && (
+        // <div className="min-w-[48px] ">
+        //     {loading ? (
+        //         <Skeleton
+        //             circle={true}
+        //             height={skeletonSize}
+        //             width={skeletonSize}
+        //             highlightColor="#161427"
+        //             baseColor="#1c1a31"
+        //         />
+        //     ) : (
+                <Link to={`/profile/${id}`} onClick={() => console.log("Avatar clicked")}>
+                    {/* {!loaded && (
                         <Skeleton
                             circle={true}
                             height={40}
@@ -94,7 +93,7 @@ const Avatar: React.FC<Avatar> = ({ image, loading, id, size, level, showLevel =
                             highlightColor="#161427"
                             baseColor="#1c1a31"
                         />
-                    )}
+                    )} */}
 
                     <div className="relative">
                         <img
@@ -120,8 +119,8 @@ const Avatar: React.FC<Avatar> = ({ image, loading, id, size, level, showLevel =
                         }
                     </div>
                 </Link>
-            )}
-        </div>
+            // )}
+        // </div>
     );
 };
 
