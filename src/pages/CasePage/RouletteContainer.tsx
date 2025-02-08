@@ -82,8 +82,8 @@ const RouletteContainer: React.FC<RouletteContainerProps> = ({ loading, data, st
             </div>
 
             <img
-                src="/images/arrow.svg"
-                alt="right arrow"
+                src={arrow}
+                alt="rightArrow"
                 className="hidden lg:flex"
                 style={{
                     transform: "rotate(180deg)",

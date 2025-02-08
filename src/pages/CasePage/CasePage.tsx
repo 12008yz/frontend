@@ -52,26 +52,34 @@ const CasePage = () => {
     }, 8000);
   }
 
-const handleOpenCase = async () => {
-  
+  const handleOpenCase = async () => {
+    if (!caseData) {
+        toast.error("Данные о кейсе недоступны!"); // Сообщение об ошибке
+        return; // Прерываем выполнение функции, если caseData недоступен
+    }
 
+    const totalCost = caseData.price * quantity; // Общая стоимость открытия кейсов
+    if (totalCost > user.walletBalance) {
+        toast.error("Недостаточно средств для открытия кейса!"); // Сообщение об ошибке
+        return; // Прерываем выполнение функции, если средств недостаточно
+    }
+
+    setLoadingButton(true); // Устанавливаем состояние загрузки
     try {
-      const response = await openBox({ id: Number(id), quantity }).unwrap();
-      setOpenedItems(response.items);
-      setLoadingButton(true);
-      if (caseData) {
-        const newBalance = user.walletBalance - (caseData.price * quantity);
+        const response = await openBox({ id: Number(id), quantity }).unwrap();
+        setOpenedItems(response.items);
+        const newBalance = user.walletBalance - totalCost; // Обновляем баланс
         const updatedUser = { ...user, walletBalance: newBalance };
         localStorage.setItem('user', JSON.stringify(updatedUser)); // Сохранение обновленного пользователя в localStorage
         dispatch(setUser(updatedUser)); // Обновление состояния пользователя в Redux
-    }
+        resetProps(); // Сброс состояния после открытия кейса
     } catch (error: any) {
-      setLoadingButton(false);
-      toast.error(`${error.data.message}!`, {
-        theme: "dark",
-      });
+        setLoadingButton(false);
+        toast.error(`${error.data.message}!`, {
+            theme: "dark",
+        });
     }
-  };
+};
 
   return (
     <div className="flex flex-col items-center w-screen">
@@ -101,7 +109,7 @@ const handleOpenCase = async () => {
                 </div>}
                 onClick={handleOpenCase}
                 loading={loadingButton}
-                disabled={loadingButton || (caseData && caseData.price > (user?.walletBalance || 0))} 
+                disabled={loadingButton || (caseData && (caseData.price * quantity) > user.walletBalance)}
               />
             </div>
           )}

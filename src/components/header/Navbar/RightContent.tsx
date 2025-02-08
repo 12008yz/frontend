@@ -7,26 +7,24 @@ import { IoMdExit } from "react-icons/io";
 import { BiWallet } from "react-icons/bi";
 import Monetary from "../../Monetary";
 import { User } from '../../../app/types';
-import { useDispatch } from 'react-redux'; // Импортируем useDispatch
+import { useDispatch, useSelector } from 'react-redux'; // Импортируем useDispatch и useSelector
 import { logout } from "../../../features/authSlice"; // Импортируем функцию logout
-import { useUserContext } from "../../../UserContext"; // Импортируем контекст пользователя
 import { useGetNotificationsQuery } from '../../../app/services/users/UserServicer'; // Импортируем хук для получения уведомлений
 import Notifications from './Notitfications'; // Импортируем компонент уведомлений
 
 interface RightContentProps {
     loading: boolean;
-    userData: User;
     openNotifications: boolean;
     setOpenNotifications: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const RightContent: React.FC<RightContentProps> = ({ loading, userData, openNotifications, setOpenNotifications }) => {
+const RightContent: React.FC<RightContentProps> = ({ loading, openNotifications, setOpenNotifications }) => {
     const dispatch = useDispatch(); // Инициализируем dispatch
+    const userData = useSelector((state: any) => state.user.user); // Получаем данные пользователя из Redux
     const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
     const isMobile = window.innerWidth <= 768;
 
     const { data: notifications = [] } = useGetNotificationsQuery(1); // Получаем уведомления для первой страницы
-    console.log("User Data: RIGHT CONTENT", userData);
     useEffect(() => {
         // Проверяем наличие непрочитанных уведомлений
         const unreadCount = notifications.filter((notification: { read: boolean }) => !notification.read).length;
