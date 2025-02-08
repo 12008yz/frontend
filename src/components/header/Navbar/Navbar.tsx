@@ -84,7 +84,6 @@ const Navbar: React.FC<NavbarProps> = ({ openSidebar, setOpenSidebar, openNotifi
 
           {isLogged ? (
             <>
-              <span className="text-white">1 онлайн пользователь</span>
               <RightContent loading={false} userData={user} openNotifications={openNotifications} setOpenNotifications={setOpenNotifications} />
             </>
           ) : (

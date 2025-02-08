@@ -1,6 +1,7 @@
 import { User } from '../app/types';
 import Player from './Player';
 import Monetary from './Monetary';
+import podium from '../images/podium.svg'
 
 interface CardProps {
     user: User | null; // добавили null в тип User
@@ -23,7 +24,7 @@ const TopPlayer: React.FC<CardProps> = ({ user, rank }) => {
             <Monetary value={user.weeklyWinnings} />
           </div>
         </div>
-        <img src="" alt="podium" className="absolute top-[70px] z-0" />
+        <img src={podium} alt="podium" className="absolute top-[70px] z-0" />
       </div>
     );
   };

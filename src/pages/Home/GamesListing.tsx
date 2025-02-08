@@ -1,5 +1,9 @@
 import { Link } from "react-router-dom";
 import Title from "../../components/Title";
+import idle from '../../images/idle.gif'
+import coinHeads from '../../images/coinHeads.webp'
+import upgrade from '../../images/upgrade.webp'
+import wild from '../../images/wild.webp'
 
 interface GameListingProps {
     name: string;
@@ -15,24 +19,24 @@ const GameListing: React.FC<GameListingProps> = ({
         {
             id: "1",
             title: "Crash",
-            image: "",
+            image: idle,
             link: "/crash"
         },
         {
             id: "2",
-            title: "CoinFlip",
-            image: "",
+            title: "coinflip",
+            image: coinHeads,
             link: "/coinflip"
         }, {
             id: "3",
             title: "Upgrade",
-            image: "",
+            image: upgrade,
             link: "/upgrade"
         },
         {
             id: "4",
             title: "Slot",
-            image: "",
+            image: wild,
             link: "/slot"
         },
     ]

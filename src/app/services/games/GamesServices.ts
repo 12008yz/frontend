@@ -4,21 +4,21 @@ export const gamesApi = api.injectEndpoints({
     endpoints: (builder) => ({
         openBox: builder.mutation<{ success: boolean; items: any[] }, { id: number; quantity?: number }>({
             query: ({ id, quantity }) => ({
-                url: `/games/openCase/${id}`,
+                url: `/game/openCase/${id}`,
                 method: 'POST',
                 body: { quantity: quantity || 1 },
             }),
         }),
         upgradeItem: builder.mutation<{ success: boolean; upgradedItem: any }, { selectedItemIds: number[]; targetItemId: number }>({
             query: ({ selectedItemIds, targetItemId }) => ({
-                url: `/games/upgrade/`,
+                url: `/game/upgrade/`,
                 method: 'POST',
                 body: { selectedItemIds, targetItemId },
             }),
         }),
         spinSlots: builder.mutation<{ success: boolean; result: any }, number>({
             query: (betAmount) => ({
-                url: `/games/slots/`,
+                url: `/game/slots/`,
                 method: 'POST',
                 body: { betAmount },
             }),
