@@ -14,7 +14,8 @@ export interface User {
    };
    hasUnreadNotifications: boolean; // Статус наличия непрочитанных уведомлений
    // Удалено поле token
-   weeklyWinnings: number
+   weeklyWinnings: number;
+   inventory: BasicItem[]
 }
 
 export interface IMarketItem {
