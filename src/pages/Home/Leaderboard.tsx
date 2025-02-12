@@ -7,7 +7,8 @@ import Player from '../../components/Player';
 import Skeleton from 'react-loading-skeleton';
 
 const Leaderboard = () => {
-    const { data: users = [], error, isLoading } = useGetTopPlayersQuery(); // Используем RTK Query
+    const { data: users, error, isLoading } = useGetTopPlayersQuery(); // Используем RTK Query
+    console.log("Fetched users:", users); // Логирование полученных пользователей
     const [loading, setLoading] = useState(isLoading); // Устанавливаем состояние загрузки
 
     useEffect(() => {
@@ -27,11 +28,11 @@ const Leaderboard = () => {
         <div className="flex flex-col items-center justify-center max-w-[360px] md:max-w-none z-50">
             <Title title="Leaderboard" />
 
-            {!loading && users.length > 1 ? (
+            {!loading && users.length > 0 ? (
                 <div className="flex gap-14 my-16">
-                    <TopPlayer key={users[1].id} user={users[1]} rank={2} />
-                    <TopPlayer key={users[0].id} user={users[0]} rank={1} />
-                    <TopPlayer key={users[2].id} user={users[2]} rank={3} />
+                    {users[0] && <TopPlayer key={users[0].id} user={users[0]} rank={1} />}
+                    {users[1] && <TopPlayer key={users[1].id} user={users[1]} rank={2} />}
+                    {users[2] && <TopPlayer key={users[2].id} user={users[2]} rank={3} />}
                 </div>
             ) : (
                 <div className="h-[330px]">

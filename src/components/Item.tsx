@@ -30,7 +30,12 @@ const Item: React.FC<itemProps> = ({ item, fixable, setRefresh, size = "large" }
     }
   };
 
-  const color = Rarities.find((rarity) => rarity.id.toString() == item?.rarity)?.color || "white";
+  console.log(`Item rarity: ${item?.rarity}`);
+  const color = Rarities.find((rarity) => {
+      const match = rarity.name.toLowerCase() === item?.rarity.toLowerCase();
+      console.log(`Checking rarity: ${item?.rarity} against ${rarity.id} - Match: ${match}`);
+      return match;
+  })?.color || "white";
   const ItemsWidthSize = size === "large" ? "w-32 md:w-44" : "w-24 md:w-32";
   const ItemHeightSize = size === "large" ? "h-32 md:h-44" : "h-24 md:h-32";
 
