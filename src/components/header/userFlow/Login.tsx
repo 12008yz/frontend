@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useLoginMutation, useLazyMeQuery } from "../../../app/services/auth/auth"; // Изменено
-import { saveTokens } from "../../../features/authSlice"; // Импортируем saveTokens
+import { useLoginMutation } from "../../../app/services/auth/auth"; 
+import { saveTokens } from "../../../features/authSlice"; 
 import MainButton from "../../MainButton";
-import { useUserContext } from "../../../UserContext"; // Удаляем toggleUserData из импорта
+import { useUserContext } from "../../../UserContext"; 
 import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
@@ -11,10 +11,9 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loadingButton, setLoadingButton] = useState(false);
-  const { toggleUserFlow, isLogged } = useUserContext(); // Удаляем toggleUserData
+  const { toggleUserFlow } = useUserContext(); 
   const dispatch = useDispatch();
-  const [login, { isLoading }] = useLoginMutation();
-  const [triggerMeQuery] = useLazyMeQuery(); // Используем useLazyMeQuery
+  const [login] = useLoginMutation();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,7 +21,6 @@ const LoginPage = () => {
     setLoadingButton(true);
     setErrorMessage("");
 
-    // Проверка заполненности полей
     if (!email || !password) {
       setErrorMessage("Пожалуйста, заполните все поля.");
       setLoadingButton(false);
@@ -32,10 +30,14 @@ const LoginPage = () => {
     try {
       const data = { email, password };
       const response = await login(data).unwrap();
-      dispatch(saveTokens({ accessToken: response.token, refreshToken: '', user: response.user })); // Обновляем состояние пользователя через Redux
-      await triggerMeQuery(response.user); // Запрос текущего пользователя
-      toggleUserFlow();
-      console.log("Данные пользователя при входе", response.user);
+      
+      if (response.token) {
+        dispatch(saveTokens({ accessToken: response.token, user: response.user || null })); 
+        toggleUserFlow();
+        console.log("Данные пользователя при входе", response.user || "Пользователь не возвращен");
+      } else {
+        setErrorMessage("Токен не получен. Попробуйте еще раз.");
+      }
     } catch (error: any) {
       console.error(error);
       setErrorMessage("Неправильный логин или пароль");
@@ -43,7 +45,6 @@ const LoginPage = () => {
       setLoadingButton(false);
     }
   };
-
   return (
     <div className="flex items-center justify-center transition-all">
       <div className="max-w-md w-full space-y-4">
@@ -85,6 +86,7 @@ const LoginPage = () => {
                 />
               </div>
             ))}
+
           </div>
           <div>
             <MainButton

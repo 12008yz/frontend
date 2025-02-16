@@ -1,22 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { authApi } from '../app/services/auth/auth'; // Импортируйте ваш authApi
+import { User } from '../app/types'; // Импортируйте ваш authApi
 
-interface User {
-    id: number;
-    username: string;
-    profilePicture: string; // URL изображения профиля
-    walletBalance: number; // Баланс кошелька
-    level: number; // Уровень пользователя
-    xp: number; // Опыт пользователя
-    nextBonus: Date; // Дата следующего бонуса
-    fixedItem?: { // Опционально, если фиксированный предмет не установлен
-        image: string;
-        name: string;
-        description: string;
-        rarity: string; // Редкость предмета
-    };
-    hasUnreadNotifications: boolean; // Статус наличия непрочитанных уведомлений
-}
 
 interface AuthState {
     accessToken: string | null;
@@ -38,13 +23,16 @@ const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        saveTokens(state, action: PayloadAction<{ accessToken: string; refreshToken?: string; user: User }>) {
+        saveTokens(state, action: PayloadAction<{ accessToken: string; refreshToken?: string; user?: User }>) {
             state.accessToken = action.payload.accessToken;
             state.refreshToken = action.payload.refreshToken || '';
-            state.user = action.payload.user; // Сохранение информации о пользователе
+            state.user = action.payload.user || null; // Сохранение информации о пользователе или null
             localStorage.setItem('accessToken', action.payload.accessToken);
-            localStorage.setItem('refreshToken', action.payload.refreshToken || '');
-            localStorage.setItem('user', JSON.stringify(action.payload.user)); // Сохранение пользователя в localStorage
+            if (action.payload.user) {
+                localStorage.setItem('user', JSON.stringify(action.payload.user)); // Сохранение пользователя в localStorage
+            } else {
+                localStorage.removeItem('user'); // Удаление пользователя из localStorage, если его нет
+            }
         },
         clearTokens(state) {
             state.accessToken = null;
@@ -76,10 +64,10 @@ const authSlice = createSlice({
             .addMatcher(authApi.endpoints.login.matchFulfilled, (state, action) => {
                 state.accessToken = action.payload.token; // Успешный вход
                 state.refreshToken = ''; // Установите refreshToken, если он доступен
-                state.user = action.payload.user; // Сохранение информации о пользователе
+                state.user = null; // Устанавливаем пользователя в null, если он не возвращается
                 state.loading = false;
                 state.error = null;
-                localStorage.setItem('user', JSON.stringify(action.payload.user)); // Сохранение пользователя в localStorage
+                localStorage.setItem('user', JSON.stringify(null)); // Сохранение пользователя в localStorage как null
             })
             .addMatcher(authApi.endpoints.login.matchRejected, (state, action) => {
                 state.loading = false;

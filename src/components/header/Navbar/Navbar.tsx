@@ -10,31 +10,31 @@ import { GiUpgrade } from 'react-icons/gi';
 import { TbCat } from "react-icons/tb";
 import { FaBars } from 'react-icons/fa';
 import RightContent from "./RightContent"; 
-import { useUserContext } from "../../../UserContext"; // Импортируем контекст пользователя
-import { selectUser } from "../../../features/authSlice"; // Импортируем селектор пользователя
+import { useUserContext } from "../../../UserContext"; 
+import { useLazyMeQuery } from '../../../app/services/auth/auth';
+import { User } from '../../../app/types';
 
-interface NavbarProps {
-  onlineUsers: number; // Добавлено для получения количества онлайн пользователей
-  openNotifications: boolean;
-  setOpenNotifications: React.Dispatch<React.SetStateAction<boolean>>;
-  openSidebar: boolean;
-  setOpenSidebar: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const Navbar: React.FC<NavbarProps> = ({ openSidebar, setOpenSidebar, openNotifications, setOpenNotifications }) => {
-  const [isHovering, setIsHovering] = useState<boolean>(false);
-  const { toggleUserFlow } = useUserContext(); // Получаем функцию из контекста
-
-  const user = useSelector(selectUser); // Получаем данные пользователя из состояния
-  const isLogged = !!user; 
-
-  const handleHover = () => {
-    setIsHovering(!isHovering);
-  };
+const Navbar: React.FC = () => {
+  const {toggleUserFlow} = useUserContext();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [openNotifications, setOpenNotifications] = useState(false);
+  const [userData, setUserData] = useState<User | null>(null);
 
   const toggleSidebar = () => {
-    setOpenSidebar(!openSidebar);
+    setIsSidebarOpen(!isSidebarOpen);
   };
+
+  const [fetchUser, { data: userQueryData, isLoading }] = useLazyMeQuery();
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+
+  useEffect(() => {
+    if (userQueryData) {
+      setUserData(userQueryData);
+    }
+  }, [userQueryData]);
 
   return (
     <div className="w-full flex justify-center">
@@ -45,20 +45,14 @@ const Navbar: React.FC<NavbarProps> = ({ openSidebar, setOpenSidebar, openNotifi
           </div>
           <div className="hidden md:flex">
             <Link to="/">
-              <div className="flex items-center gap-2" onMouseEnter={handleHover} onMouseLeave={handleHover}>
+              <div className="flex items-center gap-2">
                 <img src="/images/logo.webp" alt="logo" className="w-12 h-12 object-contain" />
-                <div className="hidden md:flex flex-col justify-center">
+                <div className="flex flex-col justify-center">
                   <div className="font-normal text-xl text-white">KaniCasino</div>
-                  <div className="absolute">
-                    <div className={`flex items-center justify-center transition-all duration-300 text-[#9793ba] text-[10px] ${isHovering ? "opacity-100 mt-10" : "opacity-0 -mt-2"}`}>
-                      REIMU FUMO ᗜ˰ᗜ
-                    </div>
-                  </div>
                 </div>
               </div>
             </Link>
             <div className="hidden md:flex items-center gap-6 ml-8 overflow-hidden">
-              {/* Links for navigation */}
               <Link to="/marketplace" className="flex items-center gap-2 font-normal text-xs 2xl:text-lg cursor-pointer">
                 <MdOutlineSell className="text-2xl" />
                 <span className="text-white hover:text-gray-200 transition-all">Market</span>
@@ -81,16 +75,13 @@ const Navbar: React.FC<NavbarProps> = ({ openSidebar, setOpenSidebar, openNotifi
               </Link>
             </div>
           </div>
-
-          {isLogged ? (
-            <>
-              <RightContent loading={false} userData={user} openNotifications={openNotifications} setOpenNotifications={setOpenNotifications} />
-            </>
-          ) : (
-            <div className="flex items-center gap-4">
-              <MainButton text="Sign In" onClick={toggleUserFlow} />
-            </div>
-          )}
+    { userData ? (
+          <RightContent />
+    ):(
+      <div className="flex items-center gap-4">
+      <MainButton text="Sign In" onClick={toggleUserFlow} />
+    </div>
+    )}
         </div>
       </nav>
     </div>

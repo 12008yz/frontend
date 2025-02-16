@@ -73,12 +73,13 @@ const userSlice = createSlice({
                 state.error = action.error.message || null; // Убедитесь, что error не undefined
             })
             .addMatcher(userApi.endpoints.claimBonus.matchFulfilled, (state, action) => {
-                // Обработка успешного получения бонуса и обновление данных пользователя
-                state.user = {
-                    ...state.user,
-                    nextBonus: action.payload.nextBonus,
-                    walletBalance: state.user.walletBalance + action.payload.value,
-                };
+                if (state.user) {
+                    // Обновляем только необходимые поля
+                    state.user.walletBalance += action.payload.value;
+                    state.user.nextBonus = action.payload.nextBonus;
+                    // Триггерим обновление компонентов
+                    state.user = { ...state.user };
+                }
                 state.loading = false;
                 state.error = null;
             })
