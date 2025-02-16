@@ -6,6 +6,7 @@ import casesReducer from '../features/casesSlice';
 import marketReducer from '../features/marketSlice';
 import gamesReducer from '../features/gamesSlice';
 import userReducer from '../features/userSlice';
+import profileReducer from '../features/profileSlice';
 
 const store = configureStore({
   reducer: {
@@ -15,6 +16,7 @@ const store = configureStore({
     games: gamesReducer,
     market: marketReducer,
     user: userReducer,
+    profile: profileReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(api.middleware), // Добавьте API middleware

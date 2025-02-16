@@ -1,10 +1,15 @@
 import { api } from '../../api';
-import { User } from '../../types'; // Импортируйте тип User
+import { User } from '../../types';
 
 export const userApi = api.injectEndpoints({
     endpoints: (builder) => ({
-        getUser:builder.query<User, string>({
+        getMe: builder.query<User, void>({
+            query: () => `/users/me`,
+            providesTags: [{ type: 'User', id: 'CURRENT' }],
+        }),
+        getProfile: builder.query<User, string>({
             query: (id) => `/users/${id}`,
+            providesTags: [{ type: 'Profile', id: 'LIST' }],
         }),
         getInventory: builder.query<any, { id: number; page?: number; filters?: any }>({
             query: ({ id, page = 1, filters }) => {
@@ -34,9 +39,9 @@ export const userApi = api.injectEndpoints({
             }),
         }),
         claimBonus: builder.mutation<{
-            message: string; // Добавьте это поле
-            nextBonus: string; // Добавьте это поле
-            value: number; // Добавьте это поле
+            message: string;
+            nextBonus: string;
+            value: number;
         }, void>({
             query: () => ({
                 url: `/users/claimBonus`,
@@ -62,9 +67,9 @@ export const userApi = api.injectEndpoints({
     }),
 });
 
-// Экспортируйте хуки для использования в компонентах
 export const {
-    useGetUserQuery,
+    useGetMeQuery,
+    useGetProfileQuery,
     useGetInventoryQuery,
     useFixItemMutation,
     usePutFixDescriptionMutation,

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useLoginMutation } from "../../../app/services/auth/auth"; 
-import { saveTokens } from "../../../features/authSlice"; 
+import { useLoginMutation, useMeQuery } from "../../../app/services/auth/auth";
+import { saveTokens } from "../../../features/authSlice";
+import { setUser } from "../../../features/userSlice";
 import MainButton from "../../MainButton";
-import { useUserContext } from "../../../UserContext"; 
+import { useUserContext } from "../../../UserContext";
 import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
@@ -11,10 +12,10 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loadingButton, setLoadingButton] = useState(false);
-  const { toggleUserFlow } = useUserContext(); 
+  const { toggleUserFlow } = useUserContext();
   const dispatch = useDispatch();
   const [login] = useLoginMutation();
-  const navigate = useNavigate();
+  const { refetch: fetchUser } = useMeQuery();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,20 +32,34 @@ const LoginPage = () => {
       const data = { email, password };
       const response = await login(data).unwrap();
       
+      console.log("Полученные данные при входе:", response);
+      
       if (response.token) {
-        dispatch(saveTokens({ accessToken: response.token, user: response.user || null })); 
+        dispatch(saveTokens({ accessToken: response.token }));
+        
+        // Запрашиваем данные пользователя отдельно
+        const userResponse = await fetchUser().unwrap();
+        console.log("Данные пользователя:", userResponse);
+        
+        if (userResponse) {
+          dispatch(setUser(userResponse));
+        } else {
+          console.error("Не удалось получить данные пользователя");
+          setErrorMessage("Ошибка при получении данных пользователя");
+        }
+        
         toggleUserFlow();
-        console.log("Данные пользователя при входе", response.user || "Пользователь не возвращен");
       } else {
         setErrorMessage("Токен не получен. Попробуйте еще раз.");
       }
     } catch (error: any) {
-      console.error(error);
+      console.error("Ошибка при входе:", error);
       setErrorMessage("Неправильный логин или пароль");
     } finally {
       setLoadingButton(false);
     }
   };
+
   return (
     <div className="flex items-center justify-center transition-all">
       <div className="max-w-md w-full space-y-4">
@@ -86,7 +101,6 @@ const LoginPage = () => {
                 />
               </div>
             ))}
-
           </div>
           <div>
             <MainButton
