@@ -11,7 +11,7 @@ import QuantityButton from "../../components/QuantityButton";
 import RouletteContainer from "./RouletteContainer";
 import Monetary from '../../components/Monetary';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUser } from '../../features/userSlice';
+import { saveTokens } from '../../features/authSlice';
 
 const CasePage = () => {
   const dispatch = useDispatch();
@@ -70,8 +70,10 @@ const CasePage = () => {
         setOpenedItems(response.items);
         const newBalance = user.walletBalance - totalCost; // Обновляем баланс
         const updatedUser = { ...user, walletBalance: newBalance };
-        localStorage.setItem('user', JSON.stringify(updatedUser)); // Сохранение обновленного пользователя в localStorage
-        dispatch(setUser(updatedUser)); // Обновление состояния пользователя в Redux
+        dispatch(saveTokens({ 
+            accessToken: localStorage.getItem('accessToken') || '', 
+            user: updatedUser 
+        }));
         resetProps(); // Сброс состояния после открытия кейса
     } catch (error: any) {
         setLoadingButton(false);
