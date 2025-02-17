@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { marketplaceApi } from '../app/services/market/MarketServicer'; 
 import { IMarketItem } from '../app/types';
 
@@ -11,16 +11,16 @@ const marketSlice = createSlice({
         error: null as string | null, // Ошибка, если есть
     },
     reducers: {
-        setItems(state, action) {
+        setItems(state, action: PayloadAction<IMarketItem[]>) {
             state.items = action.payload;
         },
-        setSelectedItem(state, action) {
+        setSelectedItem(state, action: PayloadAction<IMarketItem | null>) {
             state.selectedItem = action.payload;
         },
-        setLoading(state, action) {
+        setLoading(state, action: PayloadAction<boolean>) {
             state.loading = action.payload;
         },
-        setError(state, action) {
+        setError(state, action: PayloadAction<string | null>) {
             state.error = action.payload;
         },
     },
@@ -50,6 +50,14 @@ const marketSlice = createSlice({
                 state.error = null;
             })
             .addMatcher(marketplaceApi.endpoints.sellItem.matchRejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || null; // Обработка ошибки
+            })
+            .addMatcher(marketplaceApi.endpoints.removeListing.matchFulfilled, (state) => {
+                state.loading = false;
+                state.error = null;
+            })
+            .addMatcher(marketplaceApi.endpoints.removeListing.matchRejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message || null; // Обработка ошибки
             });

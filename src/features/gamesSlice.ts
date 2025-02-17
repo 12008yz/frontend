@@ -1,69 +1,110 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { gamesApi } from '../app/services/games/GamesServices'; // Импортируйте ваш gamesApi
+import { gamesApi } from '../app/services/games/GamesServices';
+import { BasicItem } from '../app/types';
+
+interface OpenBoxResult {
+  success: boolean;
+  items: BasicItem[];
+}
+
+interface GamesState {
+  loading: boolean;
+  error: string | null;
+  gameResults: OpenBoxResult | null;
+  selectedItem: BasicItem | null;
+}
+
+const initialState: GamesState = {
+  loading: false,
+  error: null,
+  gameResults: null,
+  selectedItem: null,
+};
 
 const gamesSlice = createSlice({
-    name: 'games',
-    initialState: {
-        loading: false, // Состояние загрузки
-        error: null as string | null, // Ошибка, если есть
-        gameResults: null as any, // Результаты операций (например, открытие коробки)
-        selectedItem: null as any, // Выбранный предмет для улучшения
+  name: 'games',
+  initialState,
+  reducers: {
+    setLoading(state, action) {
+      state.loading = action.payload;
     },
-    reducers: {
-        setLoading(state, action) {
-            state.loading = action.payload; // Установка состояния загрузки
-        },
-        setError(state, action) {
-            state.error = action.payload; // Установка ошибки
-        },
-        setGameResults(state, action) {
-            state.gameResults = action.payload; // Установка результатов операций
-        },
-        setSelectedItem(state, action) {
-            state.selectedItem = action.payload; // Установка выбранного предмета
-        },
+    setError(state, action) {
+      state.error = action.payload;
     },
-    extraReducers: (builder) => {
-        builder
-            .addMatcher(gamesApi.endpoints.openBox.matchFulfilled, (state, action) => {
-                state.gameResults = action.payload; // Успешное открытие коробки
-                state.loading = false;
-                state.error = null;
-            })
-            .addMatcher(gamesApi.endpoints.openBox.matchRejected, (state, action) => {
-                state.loading = false;
-                state.error = action.error.message || null; // Обработка ошибки
-            })
-            .addMatcher(gamesApi.endpoints.upgradeItem.matchFulfilled, (state, action) => {
-                // Обработка успешного улучшения предмета
-                state.loading = false;
-                state.error = null;
-            })
-            .addMatcher(gamesApi.endpoints.upgradeItem.matchRejected, (state, action) => {
-                state.loading = false;
-                state.error = action.error.message || null; // Обработка ошибки
-            })
-            .addMatcher(gamesApi.endpoints.spinSlots.matchFulfilled, (state, action) => {
-                // Обработка успешного вращения слотов
-                state.loading = false;
-                state.error = null;
-            })
-            .addMatcher(gamesApi.endpoints.spinSlots.matchRejected, (state, action) => {
-                state.loading = false;
-                state.error = action.error.message || null; // Обработка ошибки
-            });
-    }
+    setGameResults(state, action) {
+      state.gameResults = action.payload;
+    },
+    setSelectedItem(state, action) {
+      state.selectedItem = action.payload;
+    },
+    clearGameResults(state) {
+      state.gameResults = null;
+    },
+    clearSelectedItem(state) {
+      state.selectedItem = null;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addMatcher(gamesApi.endpoints.openBox.matchPending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addMatcher(gamesApi.endpoints.openBox.matchFulfilled, (state, action) => {
+        state.gameResults = action.payload;
+        state.loading = false;
+        state.error = null;
+      })
+      .addMatcher(gamesApi.endpoints.openBox.matchRejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to open box';
+      })
+      .addMatcher(gamesApi.endpoints.upgradeItem.matchPending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addMatcher(gamesApi.endpoints.upgradeItem.matchFulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addMatcher(gamesApi.endpoints.upgradeItem.matchRejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to upgrade item';
+      })
+      .addMatcher(gamesApi.endpoints.spinSlots.matchPending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addMatcher(gamesApi.endpoints.spinSlots.matchFulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addMatcher(gamesApi.endpoints.spinSlots.matchRejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to spin slots';
+      });
+  },
 });
 
-// Экспортируйте редюсеры
-export const { setLoading, setError, setGameResults, setSelectedItem } = gamesSlice.actions;
+export const { 
+  setLoading, 
+  setError, 
+  setGameResults, 
+  setSelectedItem,
+  clearGameResults,
+  clearSelectedItem
+} = gamesSlice.actions;
 
-// Экспортируйте редюсер
+// Селекторы
+export const selectGameResults = (state: { games: GamesState }) => state.games.gameResults;
+export const selectSelectedItem = (state: { games: GamesState }) => state.games.selectedItem;
+export const selectGamesLoading = (state: { games: GamesState }) => state.games.loading;
+export const selectGamesError = (state: { games: GamesState }) => state.games.error;
+
 export default gamesSlice.reducer;
 
-// Используйте уже существующие хуки из gamesApi
 export const {
-    useOpenBoxMutation,
-    useUpgradeItemMutation,
-    useSpinSlotsMutation,
+  useOpenBoxMutation,
+  useUpgradeItemMutation,
+  useSpinSlotsMutation,
 } = gamesApi;

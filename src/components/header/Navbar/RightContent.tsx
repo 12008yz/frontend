@@ -14,36 +14,50 @@ import { useNavigate } from "react-router-dom";
 
 const RightContent: React.FC = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    
+    // Получаем данные пользователя из authSlice
     const userData = useSelector((state: RootState) => state.auth.user);
     const isLoading = useSelector((state: RootState) => state.auth.loading);
+    
+    // Состояния для уведомлений
     const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
     const [openNotifications, setOpenNotifications] = useState(false);
+    
+    // Проверяем мобильное устройство
     const isMobile = window.innerWidth <= 768;
-const navigate = useNavigate()
+    
+    // Получаем уведомления
     const { data: notifications = [] } = useGetNotificationsQuery(1);
 
+    // Проверяем непрочитанные уведомления
     useEffect(() => {
         const unreadCount = notifications.filter((notification: { read: boolean }) => !notification.read).length;
         setHasUnreadNotifications(unreadCount > 0);
     }, [notifications]);
 
+    // Обработка выхода
     const handleLogout = () => {
         dispatch(logout());
-        navigate('/')
+        navigate('/');
     };
 
+    // Если идет загрузка, показываем индикатор
     if (isLoading) return <div>Загрузка...</div>;
 
     return (
         <div className="flex items-center gap-4">
-            <div className="hidden md:flex">
-                {userData?.nextBonus && (
+            {/* Бонус */}
+            {userData?.nextBonus && (
+                <div className="hidden md:flex">
                     <ClaimBonus bonusDate={userData.nextBonus} userData={userData} />
-                )}
-            </div>
+                </div>
+            )}
 
+            {/* Основной контент */}
             {userData && (
                 <>
+                    {/* Баланс */}
                     <div className="flex items-center gap-2 text-green-400 font-normal text-lg hover:text-green-300 transition-all">
                         <BiWallet className="text-2xl hidden md:block" />
                         <div className="max-w-[80px] md:max-w-[140px] overflow-hidden text-sm md:text-lg truncate">
@@ -51,6 +65,7 @@ const navigate = useNavigate()
                         </div>
                     </div>
 
+                    {/* Уведомления */}
                     <div className="relative cursor-pointer" onClick={() => setOpenNotifications(!openNotifications)}>
                         {notifications ? (
                             <FaRegBellSlash style={{ fontSize: "20px" }} />
@@ -63,17 +78,18 @@ const navigate = useNavigate()
                         <Notifications openNotifications={openNotifications} setOpenNotifications={setOpenNotifications} />
                     </div>
 
+                    {/* Профиль пользователя */}
                     <div className="flex items-center gap-2">
-                    <div onClick={() => window.location.href = `/profile/${userData.id}`}>
-                        <Avatar 
-                            image={userData.profilePicture} 
-                            loading={isLoading} 
-                            id={userData.id} 
-                            size={isMobile ? "small" : "medium"} 
-                            level={userData.level} 
-                            showLevel={true} 
-                        />
-                    </div>
+                        <div onClick={() => window.location.href = `/profile/${userData.id}`}>
+                            <Avatar 
+                                image={userData.profilePicture} 
+                                loading={isLoading} 
+                                id={userData.id} 
+                                size={isMobile ? "small" : "medium"} 
+                                level={userData.level} 
+                                showLevel={true} 
+                            />
+                        </div>
                         <div className="flex flex-col">
                             <span className="text-sm font-medium">{userData.username}</span>
                         </div>
@@ -81,6 +97,7 @@ const navigate = useNavigate()
                 </>
             )}
 
+            {/* Выход */}
             <div
                 className="text-[#625F7E] font-normal text-lg cursor-pointer hover:text-gray-200 transition-all"
                 onClick={handleLogout}

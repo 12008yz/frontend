@@ -84,8 +84,8 @@ const CasePage = () => {
 };
 
   return (
-    <div className="flex flex-col items-center w-screen">
-      <div className="flex flex-col items-center overflow-hidden md:max-w-[1920px]">
+    <div className="flex flex-col items-center w-screen min-h-screen bg-[#0f0e17]">
+      <div className="flex flex-col items-center overflow-hidden md:max-w-[1920px] flex-grow">
         <h1 className="text-2xl color-[#e1dde9] font-bold py-7">
           {loadingCase ? <Skeleton width={200} height={30} /> : caseData ? caseData.title : "Кейс не найден"}
         </h1>

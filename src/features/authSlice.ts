@@ -1,100 +1,94 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { authApi } from '../app/services/auth/auth'; // Импортируйте ваш authApi
-import { User } from '../app/types'; // Импортируйте ваш authApi
-
+import { authApi } from '../app/services/auth/auth';
+import { User } from '../app/types';
+import { localStorageService } from '../utils/localStorage';
 
 interface AuthState {
-    accessToken: string | null;
-    refreshToken: string | null;
-    user: User | null; // Добавлено свойство user
-    loading: boolean; // Состояние загрузки
-    error: string | null; // Ошибка, если есть
+  accessToken: string | null;
+  refreshToken: string | null;
+  user: User | null;
+  loading: boolean;
+  error: string | null;
 }
 
 const initialState: AuthState = {
-    accessToken: localStorage.getItem('accessToken'),
-    refreshToken: localStorage.getItem('refreshToken'),
-    user: JSON.parse(localStorage.getItem('user') || 'null'), // Восстановление пользователя из localStorage
-    loading: false,
-    error: null,
+  accessToken: localStorageService.getItem('accessToken'),
+  refreshToken: localStorageService.getItem('refreshToken'),
+  user: localStorageService.getJSON('user'),
+  loading: false,
+  error: null,
 };
 
 const authSlice = createSlice({
-    name: 'auth',
-    initialState,
-    reducers: {
-        saveTokens(state, action: PayloadAction<{ accessToken: string; refreshToken?: string; user?: User }>) {
-            state.accessToken = action.payload.accessToken;
-            state.refreshToken = action.payload.refreshToken || '';
-            state.user = action.payload.user || null; // Сохранение информации о пользователе или null
-            localStorage.setItem('accessToken', action.payload.accessToken);
-            if (action.payload.user) {
-                localStorage.setItem('user', JSON.stringify(action.payload.user)); // Сохранение пользователя в localStorage
-            } else {
-                localStorage.removeItem('user'); // Удаление пользователя из localStorage, если его нет
-            }
-        },
-        clearTokens(state) {
-            state.accessToken = null;
-            state.refreshToken = null;
-            state.user = null; // Очистка информации о пользователе
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
-            localStorage.removeItem('user'); // Удаление пользователя из localStorage
-            console.log('Clear Сработал! Пользователь:' , localStorage.getItem("user"))
-        },
-        logout(state) { // Новое действие для выхода
-            state.accessToken = null;
-            state.refreshToken = null;
-            state.user = null; // Очистка информации о пользователе
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
-            localStorage.removeItem('user'); // Удаление пользователя из localStorage
-            console.log('Пользователь вышел из системы');
-        },
-        setLoading(state, action) {
-            state.loading = action.payload; // Установка состояния загрузки
-        },
-        setError(state, action) {
-            state.error = action.payload; // Установка ошибки
-        },
+  name: 'auth',
+  initialState,
+  reducers: {
+    saveTokens(state, action: PayloadAction<{ accessToken: string; refreshToken?: string; user?: User }>) {
+      state.accessToken = action.payload.accessToken;
+      state.refreshToken = action.payload.refreshToken || '';
+      state.user = action.payload.user || null;
+      
+      localStorageService.setItem('accessToken', action.payload.accessToken);
+      if (action.payload.user) {
+        localStorageService.setJSON('user', action.payload.user);
+      } else {
+        localStorageService.removeItem('user');
+      }
     },
-    extraReducers: (builder) => {
-        builder
-            .addMatcher(authApi.endpoints.login.matchFulfilled, (state, action) => {
-                state.accessToken = action.payload.token;
-                state.loading = false;
-                state.error = null;
-                localStorage.setItem('accessToken', action.payload.token);
-            })
-            .addMatcher(authApi.endpoints.me.matchFulfilled, (state, action) => {
-                state.user = action.payload || null;
-                if (action.payload) {
-                    localStorage.setItem('user', JSON.stringify(action.payload));
-                }
-            })
-            .addMatcher(authApi.endpoints.login.matchRejected, (state, action) => {
-                state.loading = false;
-                state.error = action.error.message || null; // Обработка ошибки
-            })
-            .addMatcher(authApi.endpoints.register.matchFulfilled, (state, action) => {
-                state.loading = false;
-                state.error = null;
-            })
-            .addMatcher(authApi.endpoints.register.matchRejected, (state, action) => {
-                state.loading = false;
-                state.error = action.error.message || null; // Обработка ошибки
-            });
+    logout(state) {
+      state.accessToken = null;
+      state.refreshToken = null;
+      state.user = null;
+      
+      localStorageService.removeItem('accessToken');
+      localStorageService.removeItem('refreshToken');
+      localStorageService.removeItem('user');
     },
+    setLoading(state, action: PayloadAction<boolean>) {
+      state.loading = action.payload;
+    },
+    setError(state, action: PayloadAction<string | null>) {
+      state.error = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addMatcher(authApi.endpoints.login.matchFulfilled, (state, action) => {
+        state.accessToken = action.payload.token;
+        state.loading = false;
+        state.error = null;
+        localStorageService.setItem('accessToken', action.payload.token);
+      })
+      .addMatcher(authApi.endpoints.me.matchFulfilled, (state, action) => {
+        state.user = action.payload || null;
+        if (action.payload) {
+          localStorageService.setJSON('user', action.payload);
+        }
+      })
+      .addMatcher(authApi.endpoints.login.matchRejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Login failed';
+      })
+      .addMatcher(authApi.endpoints.register.matchFulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addMatcher(authApi.endpoints.register.matchRejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Registration failed';
+      });
+  },
 });
 
-// Экспортируйте действия
-export const { saveTokens, clearTokens, logout, setLoading, setError } = authSlice.actions;
+export const { saveTokens, logout, setLoading, setError } = authSlice.actions;
 
-// Экспортируйте редюсер
-export default authSlice.reducer;
+export const selectAuth = (state: { auth: AuthState }) => state.auth;
 
 // Селекторы
+export const selectUser = (state: { auth: AuthState }) => state.auth.user;
 export const selectAccessToken = (state: { auth: AuthState }) => state.auth.accessToken;
 export const selectRefreshToken = (state: { auth: AuthState }) => state.auth.refreshToken;
-export const selectUser = (state: { auth: AuthState }) => state.auth.user; // Селектор для получения пользователя
+export const selectAuthLoading = (state: { auth: AuthState }) => state.auth.loading;
+export const selectAuthError = (state: { auth: AuthState }) => state.auth.error;
+
+export default authSlice.reducer;

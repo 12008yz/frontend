@@ -1,51 +1,72 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { casesApi } from '../app/services/cases/CaseServices'; 
-import { Case } from '../app/types'; 
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { casesApi } from '../app/services/cases/CaseServices';
+import { Case } from '../app/types';
+
+interface CasesState {
+  cases: Case[];
+  selectedCase: Case | null;
+  loading: boolean;
+  error: string | null;
+}
+
+const initialState: CasesState = {
+  cases: [],
+  selectedCase: null,
+  loading: false,
+  error: null,
+};
 
 const casesSlice = createSlice({
-    name: 'cases',
-    initialState: {
-        cases: [] as Case[],
-        selectedCase: null as Case | null,
-        loading: false, // Состояние загрузки
-        error: null as string | null, // Ошибка, если есть
+  name: 'cases',
+  initialState,
+  reducers: {
+    setCases(state, action: PayloadAction<Case[]>) {
+      state.cases = action.payload;
     },
-    reducers: {
-        setCases(state, action) {
-            state.cases = action.payload;
-        },
-        setSelectedCase(state, action) {
-            state.selectedCase = action.payload;
-        },
-        setLoading(state, action) {
-            state.loading = action.payload; // Установка состояния загрузки
-        },
-        setError(state, action) {
-            state.error = action.payload; // Установка ошибки
-        },
+    setSelectedCase(state, action: PayloadAction<Case | null>) {
+      state.selectedCase = action.payload;
     },
-    extraReducers: (builder) => {
-        builder
-            .addMatcher(casesApi.endpoints.getCases.matchFulfilled, (state, action) => {
-                state.cases = action.payload; // Успешное получение кейсов
-                state.loading = false;
-                state.error = null;
-            })
-            .addMatcher(casesApi.endpoints.getCases.matchRejected, (state, action) => {
-                state.loading = false;
-                state.error = action.error.message || null; // Обработка ошибки
-            });
-    }
+    setLoading(state, action: PayloadAction<boolean>) {
+      state.loading = action.payload;
+    },
+    setError(state, action: PayloadAction<string | null>) {
+      state.error = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addMatcher(casesApi.endpoints.getCases.matchFulfilled, (state, action) => {
+        state.cases = action.payload;
+        state.loading = false;
+        state.error = null;
+      })
+      .addMatcher(casesApi.endpoints.getCases.matchRejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to load cases';
+      })
+      .addMatcher(casesApi.endpoints.getCase.matchFulfilled, (state, action) => {
+        state.selectedCase = action.payload;
+        state.loading = false;
+        state.error = null;
+      })
+      .addMatcher(casesApi.endpoints.getCase.matchRejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to load case';
+      });
+  },
 });
 
-// Экспортируйте редюсеры
 export const { setCases, setSelectedCase, setLoading, setError } = casesSlice.actions;
 
-// Экспортируйте редюсер
+// Селекторы
+export const selectCases = (state: { cases: CasesState }) => state.cases.cases;
+export const selectSelectedCase = (state: { cases: CasesState }) => state.cases.selectedCase;
+export const selectCasesLoading = (state: { cases: CasesState }) => state.cases.loading;
+export const selectCasesError = (state: { cases: CasesState }) => state.cases.error;
+
 export default casesSlice.reducer;
 
-// Используйте уже существующие хуки из casesApi
 export const {
-    useGetCasesQuery,
-    useGetCaseQuery,
+  useGetCasesQuery,
+  useGetCaseQuery,
 } = casesApi;

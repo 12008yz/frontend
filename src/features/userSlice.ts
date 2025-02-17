@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { userApi } from '../app/services/users/UserServicer'; 
 import { authApi } from '../app/services/auth/auth'; 
 import { User } from '../app/types'; 
@@ -11,14 +11,14 @@ const userSlice = createSlice({
         error: null as string | null,
     },
     reducers: {
-        setUser(state, action) {
+        setUser(state, action: PayloadAction<User | null>) {
             state.user = action.payload;
             localStorage.setItem('user', JSON.stringify(action.payload));
         },
-        setLoading(state, action) {
+        setLoading(state, action: PayloadAction<boolean>) {
             state.loading = action.payload;
         },
-        setError(state, action) {
+        setError(state, action: PayloadAction<string | null>) {
             state.error = action.payload;
         },
         clearUser(state) {
@@ -71,6 +71,15 @@ const userSlice = createSlice({
                 state.error = null;
             })
             .addMatcher(userApi.endpoints.claimBonus.matchRejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || null;
+            })
+            .addMatcher(userApi.endpoints.updateProfilePicture.matchFulfilled, (state) => {
+                // Профиль обновляется через getMe, поэтому здесь просто сбрасываем состояние
+                state.loading = false;
+                state.error = null;
+            })
+            .addMatcher(userApi.endpoints.updateProfilePicture.matchRejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message || null;
             });
