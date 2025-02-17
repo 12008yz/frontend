@@ -11,30 +11,22 @@ import { TbCat } from "react-icons/tb";
 import { FaBars } from 'react-icons/fa';
 import RightContent from "./RightContent"; 
 import { useUserContext } from "../../../UserContext"; 
-import { useLazyMeQuery } from '../../../app/services/auth/auth';
-import { User } from '../../../app/types';
+import { selectUser } from '../../../features/authSlice';
 
 const Navbar: React.FC = () => {
   const {toggleUserFlow} = useUserContext();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [openNotifications, setOpenNotifications] = useState(false);
-  const [userData, setUserData] = useState<User | null>(null);
+  const user = useSelector(selectUser);
+  const [, forceUpdate] = useState({});
+
+  useEffect(() => {
+    forceUpdate({});
+  }, [user]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
-
-  const [fetchUser, { data: userQueryData, isLoading }] = useLazyMeQuery();
-
-  useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
-
-  useEffect(() => {
-    if (userQueryData) {
-      setUserData(userQueryData);
-    }
-  }, [userQueryData]);
 
   return (
     <div className="w-full flex justify-center">
@@ -75,13 +67,13 @@ const Navbar: React.FC = () => {
               </Link>
             </div>
           </div>
-    { userData ? (
-          <RightContent />
-    ):(
-      <div className="flex items-center gap-4">
-      <MainButton text="Sign In" onClick={toggleUserFlow} />
-    </div>
-    )}
+          { user ? (
+            <RightContent />
+          ):(
+            <div className="flex items-center gap-4">
+              <MainButton text="Sign In" onClick={toggleUserFlow} />
+            </div>
+          )}
         </div>
       </nav>
     </div>

@@ -62,12 +62,16 @@ const authSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addMatcher(authApi.endpoints.login.matchFulfilled, (state, action) => {
-                state.accessToken = action.payload.token; // Успешный вход
-                state.refreshToken = ''; // Установите refreshToken, если он доступен
-                state.user = null; // Устанавливаем пользователя в null, если он не возвращается
+                state.accessToken = action.payload.token;
                 state.loading = false;
                 state.error = null;
-                localStorage.setItem('user', JSON.stringify(null)); // Сохранение пользователя в localStorage как null
+                localStorage.setItem('accessToken', action.payload.token);
+            })
+            .addMatcher(authApi.endpoints.me.matchFulfilled, (state, action) => {
+                state.user = action.payload || null;
+                if (action.payload) {
+                    localStorage.setItem('user', JSON.stringify(action.payload));
+                }
             })
             .addMatcher(authApi.endpoints.login.matchRejected, (state, action) => {
                 state.loading = false;

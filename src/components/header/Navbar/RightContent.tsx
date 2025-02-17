@@ -10,15 +10,16 @@ import { logout } from "../../../features/authSlice";
 import { useGetNotificationsQuery } from '../../../app/services/users/UserServicer';
 import Notifications from './Notitfications';
 import { RootState } from '../../../app/store';
+import { useNavigate } from "react-router-dom";
 
 const RightContent: React.FC = () => {
     const dispatch = useDispatch();
-    const userData = useSelector((state: RootState) => state.user.user);
-    const isLoading = useSelector((state: RootState) => state.user.loading);
+    const userData = useSelector((state: RootState) => state.auth.user);
+    const isLoading = useSelector((state: RootState) => state.auth.loading);
     const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
     const [openNotifications, setOpenNotifications] = useState(false);
     const isMobile = window.innerWidth <= 768;
-
+const navigate = useNavigate()
     const { data: notifications = [] } = useGetNotificationsQuery(1);
 
     useEffect(() => {
@@ -28,7 +29,7 @@ const RightContent: React.FC = () => {
 
     const handleLogout = () => {
         dispatch(logout());
-        window.location.href = '/';
+        navigate('/')
     };
 
     if (isLoading) return <div>Загрузка...</div>;
@@ -75,7 +76,6 @@ const RightContent: React.FC = () => {
                     </div>
                         <div className="flex flex-col">
                             <span className="text-sm font-medium">{userData.username}</span>
-                            <span className="text-xs text-gray-400">XP: {userData.xp}</span>
                         </div>
                     </div>
                 </>

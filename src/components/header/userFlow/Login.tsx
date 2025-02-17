@@ -35,18 +35,12 @@ const LoginPage = () => {
       console.log("Полученные данные при входе:", response);
       
       if (response.token) {
+        // Сохраняем токен
         dispatch(saveTokens({ accessToken: response.token }));
         
-        // Запрашиваем данные пользователя отдельно
+        // Запрашиваем данные пользователя
         const userResponse = await fetchUser().unwrap();
         console.log("Данные пользователя:", userResponse);
-        
-        if (userResponse) {
-          dispatch(setUser(userResponse));
-        } else {
-          console.error("Не удалось получить данные пользователя");
-          setErrorMessage("Ошибка при получении данных пользователя");
-        }
         
         toggleUserFlow();
       } else {
