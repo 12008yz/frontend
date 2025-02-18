@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useGetCaseQuery } from "../../app/services/cases/CaseServices";
 import Title from "../../components/Title";
 import Item from "../../components/Item";
-import { useOpenBoxMutation } from "../../app/services/games/GamesServices";
+import { useAppDispatch } from "../../app/hooks";
+import { openBoxAndRefreshUser } from "../../features/gamesThunks";
 import MainButton from "../../components/MainButton";
 import Skeleton from "react-loading-skeleton";
 import { toast } from "react-toastify";
@@ -14,7 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { saveTokens } from '../../features/authSlice';
 
 const CasePage = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const user = useSelector((state: any) => state.user.user);
   const [openedItems, setOpenedItems] = useState<BasicItem[]>([]);
   const [showPrize, setShowPrize] = useState<boolean>(false);
@@ -26,7 +27,6 @@ const CasePage = () => {
 
   const id = window.location.pathname.split("/")[2];
   const { data: caseData, isLoading: loadingCase, error } = useGetCaseQuery(Number(id));
-  const [openBox] = useOpenBoxMutation();
 
   useEffect(() => {
     if (error) {
@@ -66,7 +66,7 @@ const CasePage = () => {
 
     setLoadingButton(true); // Устанавливаем состояние загрузки
     try {
-        const response = await openBox({ id: Number(id), quantity }).unwrap();
+        const response = await dispatch(openBoxAndRefreshUser({ id: Number(id), quantity })).unwrap();
         setOpenedItems(response.items);
         const newBalance = user.walletBalance - totalCost; // Обновляем баланс
         const updatedUser = { ...user, walletBalance: newBalance };

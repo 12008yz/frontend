@@ -11,6 +11,7 @@ import { useGetNotificationsQuery } from '../../../app/services/users/UserServic
 import Notifications from './Notitfications';
 import { RootState } from '../../../app/store';
 import { useNavigate } from "react-router-dom";
+import { localStorageService } from "../../../utils/localStorage";
 
 const RightContent: React.FC = () => {
     const dispatch = useDispatch();
@@ -80,7 +81,7 @@ const RightContent: React.FC = () => {
 
                     {/* Профиль пользователя */}
                     <div className="flex items-center gap-2">
-                        <div onClick={() => window.location.href = `/profile/${userData.id}`}>
+                        <div>
                             <Avatar 
                                 image={userData.profilePicture} 
                                 loading={isLoading} 
