@@ -6,20 +6,22 @@ import { IoMdExit } from "react-icons/io";
 import { BiWallet } from "react-icons/bi";
 import Monetary from "../../Monetary";
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from "../../../features/authSlice";
+import { logoutAction } from "../../../features/authSlice";
 import { useGetNotificationsQuery } from '../../../app/services/users/UserServicer';
 import Notifications from './Notitfications';
 import { RootState } from '../../../app/store';
 import { useNavigate } from "react-router-dom";
 import { localStorageService } from "../../../utils/localStorage";
 
-const RightContent: React.FC = () => {
+const RightContent = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     
-    // Получаем данные пользователя из authSlice
-    const userData = useSelector((state: RootState) => state.auth.user);
-    const isLoading = useSelector((state: RootState) => state.auth.loading);
+    // Получаем данные пользователя и состояние загрузки одним селектором
+    const { user: userData, loading: isLoading } = useSelector((state: RootState) => ({
+        user: state.auth.user,
+        loading: state.auth.loading
+    }));
     
     // Состояния для уведомлений
     const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
@@ -39,7 +41,7 @@ const RightContent: React.FC = () => {
 
     // Обработка выхода
     const handleLogout = () => {
-        dispatch(logout());
+        dispatch(logoutAction());
         navigate('/');
     };
 

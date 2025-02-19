@@ -11,13 +11,21 @@ interface AuthState {
   error: string | null;
 }
 
-const initialState: AuthState = {
-  accessToken: localStorageService.getItem('accessToken'),
-  refreshToken: localStorageService.getItem('refreshToken'),
-  user: localStorageService.getJSON('user'),
-  loading: false,
-  error: null,
+const loadInitialState = () => {
+  const accessToken = localStorageService.getItem('accessToken');
+  const refreshToken = localStorageService.getItem('refreshToken');
+  const user = localStorageService.getJSON('user');
+  
+  return {
+    accessToken,
+    refreshToken,
+    user,
+    loading: false,
+    error: null,
+  };
 };
+
+const initialState: AuthState = loadInitialState();
 
 const authSlice = createSlice({
   name: 'auth',
@@ -33,6 +41,12 @@ const authSlice = createSlice({
         localStorageService.setJSON('user', action.payload.user);
       } else {
         localStorageService.removeItem('user');
+      }
+    },
+    updateUser(state, action: PayloadAction<Partial<User>>) {
+      if (state.user) {
+        state.user = { ...state.user, ...action.payload };
+        localStorageService.setJSON('user', state.user);
       }
     },
     logout(state) {
@@ -80,7 +94,9 @@ const authSlice = createSlice({
   },
 });
 
-export const { saveTokens, logout, setLoading, setError } = authSlice.actions;
+export const { saveTokens, logout, setLoading, setError, updateUser } = authSlice.actions;
+
+export const logoutAction = () => logout();
 
 export const selectAuth = (state: { auth: AuthState }) => state.auth;
 

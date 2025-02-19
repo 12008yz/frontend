@@ -6,7 +6,7 @@ import MainButton from "../MainButton"; // Импортируйте кнопку
 import Countdown from "../../components/Countdown"; // Импортируйте компонент обратного отсчета
 import { User } from "../../app/types"; // Импортируйте тип User
 import { useDispatch } from "react-redux"; // Импортируем useDispatch
-import { saveTokens } from "../../features/authSlice"; // Импортируем saveTokens
+import { saveTokens, updateUser } from "../../features/authSlice"; // Импортируем saveTokens
 
 const ClaimBonus: React.FC<{ bonusDate: Date; userData: User }> = ({ bonusDate, userData }) => {
     const [bonusAvailable, setBonusAvailable] = useState(false);
@@ -44,14 +44,18 @@ const ClaimBonus: React.FC<{ bonusDate: Date; userData: User }> = ({ bonusDate, 
             toast.success("Бонус успешно получен!", {
                 theme: "dark",
             });
+            const updatedUser = {
+                ...userData,
+                nextBonus: new Date(res.nextBonus), 
+                walletBalance: userData.walletBalance + res.value
+            };
+            
             dispatch(saveTokens({
-                accessToken: localStorage.getItem('accessToken') || '', // Получаем токен из localStorage, если null, передаем пустую строку
-                user: {
-                    ...userData,
-                    nextBonus: new Date(res.nextBonus), 
-                    walletBalance: userData.walletBalance + res.value
-                }
-            })); // Обновляем состояние пользователя через Redux
+                accessToken: localStorage.getItem('accessToken') || '',
+                user: updatedUser
+            }));
+            
+            dispatch(updateUser(updatedUser)); // Синхронизируем с localStorage
         } catch (error: any) {
             toast.error(`${error.data?.message || "Ошибка получения бонуса!"}`, {
                 theme: "dark",

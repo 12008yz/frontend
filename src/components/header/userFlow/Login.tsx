@@ -42,6 +42,9 @@ const LoginPage = () => {
         const userResponse = await fetchUser().unwrap();
         console.log("Данные пользователя:", userResponse);
         
+        // Обновляем данные пользователя в redux
+        dispatch(setUser(userResponse));
+        
         toggleUserFlow();
       } else {
         setErrorMessage("Токен не получен. Попробуйте еще раз.");

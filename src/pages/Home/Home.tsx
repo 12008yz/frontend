@@ -8,8 +8,6 @@ import { toast } from "react-toastify";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Case } from "../../app/types";
-import { useUserContext } from "../../UserContext";
-import { useGetTopPlayersQuery } from "../../features/userSlice";
 import crashBanner from '../../images/crashBanner.webp'
 import marisaBanner from '../../images/marisaBanner.png'
 import paris from '../../images/paris.webp'
@@ -17,19 +15,12 @@ import homeBanner from '../../images/homeBanner.webp'
 import KANICASINO from '../../images/KANICASINO.webp'
 const Home = () => {
   const { data: cases = [] as Case[], error, isLoading } = useGetCasesQuery();
-  const { isLogged } = useUserContext(); 
-  const { data: topPlayers } = useGetTopPlayersQuery(); // Переместим хук на верхний уровень
 
   useEffect(() => {
     if (error) {
       toast.error("Error while connecting to the server");
     }
   }, [error]);
-
-  // Запросы для авторизованных пользователей
-  if (isLogged) {
-    useGetTopPlayersQuery();
-  }
 
   const BannerContent = [
     {

@@ -28,7 +28,7 @@ const Leaderboard = () => {
         <div className="flex flex-col items-center justify-center max-w-[360px] md:max-w-none z-50">
             <Title title="Leaderboard" />
 
-            {!loading && users.length > 0 ? (
+            {!loading && users?.length > 0 ? (
                 <div className="flex gap-14 my-16">
                     {users[0] && <TopPlayer key={users[0].id} user={users[0]} rank={1} />}
                     {users[1] && <TopPlayer key={users[1].id} user={users[1]} rank={2} />}
@@ -73,13 +73,11 @@ const Leaderboard = () => {
                                     <Player user={user} size="small" />
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    {new Intl.NumberFormat("en-US", {
+                                    {new Intl.NumberFormat("ru-RU", {
                                         style: "currency",
-                                        currency: "DOL",
+                                        currency: "RUB",
                                         maximumFractionDigits: 0,
-                                    })
-                                        .format(user.weeklyWinnings)
-                                        .replace("DOL", "Руб")}
+                                    }).format(user.weeklyWinnings)}
                                 </td>
                             </tr>
                         ))}

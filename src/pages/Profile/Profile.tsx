@@ -26,6 +26,9 @@ const Profile = () => {
   const [page, setPage] = useState<number>(1);
 
   useEffect(() => {
+    // Сброс скролла при загрузке страницы
+    window.scrollTo(0, 0);
+    
     if (profileData) {
       dispatch(setProfile(profileData));
       setInvItems(profileData.inventory || []);
