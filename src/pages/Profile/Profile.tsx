@@ -31,18 +31,24 @@ const Profile = () => {
     
     if (profileData) {
       dispatch(setProfile(profileData));
-      setInvItems(profileData.inventory || []);
+      const itemsPerPage = 12;
+      const items = profileData.inventory || [];
+      const totalPages = Math.ceil(items.length / itemsPerPage);
+      const startIndex = (page - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      
+      setInvItems(items.slice(startIndex, endIndex));
       setInventory({
-        totalPages: 1,
-        currentPage: 1,
-        items: profileData.inventory || [],
+        totalPages,
+        currentPage: page,
+        items,
       });
     }
 
     return () => {
       dispatch(clearProfile());
     };
-  }, [profileData, dispatch]);
+  }, [profileData, dispatch, page]);
 
   return (
     <div className="flex flex-col items-center w-screen">
@@ -68,7 +74,7 @@ const Profile = () => {
               <h2>No items</h2>
             )}
           </div>
-          {inventory && inventory.totalPages > 1 && (
+          {inventory && inventory.items.length > 20 && (
             <Pagination 
               totalPages={inventory.totalPages} 
               currentPage={inventory.currentPage} 
