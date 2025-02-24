@@ -8,6 +8,7 @@ import Skeleton from "react-loading-skeleton";
 import Item from "../../components/Item";
 import { RootState } from "../../app/store";
 import { setProfile, clearProfile } from "../../features/profileSlice";
+import socket from "../../socket";
 
 interface Inventory {
   totalPages: number;
@@ -15,6 +16,10 @@ interface Inventory {
   items: any[];
 }
 
+interface SocketData {
+  id: number;
+  message: string;
+}
 const Profile = () => {
   const dispatch = useDispatch();
   const id = window.location.pathname.split("/")[2];
@@ -45,8 +50,25 @@ const Profile = () => {
       });
     }
 
+    // Обработчики событий WebSocket
+    socket.on('connect', () => {
+      console.log('Connected to WebSocket server');
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Disconnected from WebSocket server');
+    });
+
+    socket.on('data', (data: SocketData) => {
+      console.log('Received data:', data);
+      // Обновите состояние компонента на основе полученных данных
+  });
+
     return () => {
       dispatch(clearProfile());
+      socket.off('connect');
+      socket.off('disconnect');
+      socket.off('data');
     };
   }, [profileData, dispatch, page]);
 

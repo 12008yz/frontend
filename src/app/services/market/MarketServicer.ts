@@ -28,11 +28,11 @@ export const marketplaceApi = api.injectEndpoints({
                 }
             }),
         }),
-       sellItem: builder.mutation<{ success: boolean }, { item: IMarketItem; price: number }>({
+        sellItem: builder.mutation<{ success: boolean }, { item: IMarketItem; price: number }>({
     query: ({ item, price }) => ({
         url: `/marketplace/`,
         method: 'POST',
-        body: { id: item.id, price } // Извлечение id из item
+        body: { id: item.uniqueId, price } // Используем uniqueId вместо id
     }),
 }),
         buyItem: builder.mutation<{ success: boolean }, number>({
