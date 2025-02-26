@@ -11,25 +11,7 @@ import SellItemModal from './SellItemModal'
 import { useGetItemsQuery } from "../../app/services/market/MarketServicer";
 import { IMarketItem } from "../../app/types";
 
-interface Props {
-
-  image: string;
-  name: string;
-  rarity: number;
-  id: string;
-  uniqueId: string
-  cheapestPrice: number;
-  totalListings: number;
-
-}
-
-interface ItemData {
-  totalPages: number;
-  currentPage: number;
-  items: Props[];
-}
-
-const Marketplace: React.FC<ItemData> = () => {
+const Marketplace: React.FC = () => {
   const [items, setItems] = useState<IMarketItem[]>([]);
   const [openSellModal, setOpenSellModal] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
@@ -45,12 +27,13 @@ const Marketplace: React.FC<ItemData> = () => {
   const { isLogged } = useUserContext();
 
   const { data: itemsData } = useGetItemsQuery({ page, filters });
-
   useEffect(() => {
-    if (itemsData) {
-      setItems(itemsData);
+    if (itemsData && itemsData.items && Array.isArray(itemsData.items)) {
+        setItems(itemsData.items); // Устанавливаем массив из items
+    } else {
+        console.error("itemsData не содержит массив items:", itemsData);
     }
-  }, [itemsData]);
+}, [itemsData]);
 
   useEffect(() => {
     if (refresh) {
@@ -62,7 +45,6 @@ const Marketplace: React.FC<ItemData> = () => {
     setRefresh(true);
     scrollTo(0, 0);
   }, [page]);
-
 
   return (
     <div className="flex flex-col items-center justify-center ">
@@ -102,31 +84,34 @@ const Marketplace: React.FC<ItemData> = () => {
         )
       }
       
-        <div className="flex flex-wrap items-center gap-4 justify-center px-8 ">
-          {Array(10)
+      <div className="flex flex-wrap items-center gap-4 justify-center px-8 ">
+        {items.length === 0 ? (
+          Array(10)
             .fill(0)
             .map((_, i) => (
               <div key={i} className="w-[226px] h-[334px]  ">
                 <Skeleton height={334} width={226} />
               </div>
+            ))
+        ) : (
+          <div className="flex flex-wrap items-center gap-4 justify-center px-8  max-w-[1600px]">
+            {items.map((item) => (
+              <MarketItem
+                key={item.uniqueId} // Используем uniqueId для ключа
+                item={item}
+              />
             ))}
-        </div>
-      ) : (
-        <div className="flex flex-wrap items-center gap-4 justify-center px-8  max-w-[1600px]">
-          {items.map((item) => (
-            <MarketItem
-              key={item.id}
-              item={item}
-            />
-          ))}
-        </div>
-      {
-        items.length > 0 && (
-          <Pagination totalPages={Math.ceil(items.length / 10)} currentPage={page} setPage={setPage} />
-        )
-      }
+          </div>
+        )}
+        {
+          items.length > 0 && (
+            <Pagination totalPages={Math.ceil(items.length / 10)} currentPage={page} setPage={setPage} />
+          )
+        }
+      </div>
     </div>
   );
 };
 
 export default Marketplace;
+

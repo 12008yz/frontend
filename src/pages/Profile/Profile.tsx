@@ -96,7 +96,7 @@ const Profile = () => {
               <h2>No items</h2>
             )}
           </div>
-          {inventory && inventory.items.length > 20 && (
+          {inventory && inventory.items.length > 10 && (
             <Pagination 
               totalPages={inventory.totalPages} 
               currentPage={inventory.currentPage} 

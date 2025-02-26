@@ -1,6 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { marketplaceApi } from '../app/services/market/MarketServicer'; 
 import { IMarketItem } from '../app/types';
+import { userApi } from '../app/services/users/UserServicer'; // Импортируем userApi
+import { updateUser } from './authSlice'; // Импортируем действие updateUser
 
 const marketSlice = createSlice({
     name: 'market',
@@ -26,11 +28,11 @@ const marketSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addMatcher(marketplaceApi.endpoints.getItems.matchFulfilled, (state, action) => {
-                state.items = action.payload; // Успешное получение предметов
-                state.loading = false;
-                state.error = null;
-            })
+        .addMatcher(marketplaceApi.endpoints.getItems.matchFulfilled, (state, action) => {
+            state.items = action.payload.items; // Успешное получение предметов
+            state.loading = false;
+            state.error = null;
+        })
             .addMatcher(marketplaceApi.endpoints.getItems.matchRejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message || null; // Обработка ошибки
@@ -39,6 +41,10 @@ const marketSlice = createSlice({
                 // Обработка успешной покупки предмета
                 state.loading = false;
                 state.error = null;
+
+                console.log("Покупка успешна, обновляем данные пользователя");
+                // Обновляем данные пользователя после успешной покупки
+                userApi.endpoints.getMe.initiate(); // Запрос для получения актуальных данных о пользователе
             })
             .addMatcher(marketplaceApi.endpoints.buyItem.matchRejected, (state, action) => {
                 state.loading = false;
@@ -48,6 +54,10 @@ const marketSlice = createSlice({
                 // Обработка успешной продажи предмета
                 state.loading = false;
                 state.error = null;
+
+                console.log("Продажа успешна, обновляем данные пользователя");
+                // Обновляем данные пользователя после успешной продажи
+                userApi.endpoints.getMe.initiate(); // Запрос для получения актуальных данных о пользователе
             })
             .addMatcher(marketplaceApi.endpoints.sellItem.matchRejected, (state, action) => {
                 state.loading = false;

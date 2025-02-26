@@ -8,7 +8,7 @@ interface Props {
 }
 
 const MarketItem: React.FC<Props> = ({ item }) => {
-  const color = Rarities.find((rarity) => rarity.name === item.item.name)?.color || "white";
+  const color = item.itemName ? Rarities.find((rarity) => rarity.name === item.itemName)?.color || "white" : "white";
 
   return (
     <div className="border border-[#161448] rounded-lg p-4 bg-gradient-to-tr from-[#1D1730] to-[#141333] transition-all duration-500 ease-in-out w-[226px] h-[334px]">
@@ -18,12 +18,12 @@ const MarketItem: React.FC<Props> = ({ item }) => {
           style={{ backgroundColor: color }}
         />
         <span className="text-lg font-semibold text-white truncate">
-          {item.item.name}
+          {item.itemName || "Unknown Item"}
         </span>
       </div>
       <img
-        src={item.item.image}
-        alt={item.item.name}
+        src={item.itemImage}
+        alt={item.itemName || "Item Image"}
         className="w-full h-48 object-cover rounded"
       />
       <p className="text-blue-500 text-center py-1 text-ellipsis truncate">

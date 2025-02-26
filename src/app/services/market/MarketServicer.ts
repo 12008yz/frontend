@@ -3,7 +3,7 @@ import { IMarketItem } from '../../types'; // Импортируйте инте�
 
 export const marketplaceApi = api.injectEndpoints({
     endpoints: (builder) => ({
-        getItems: builder.query<IMarketItem[], { page: number; filters: any }>({
+        getItems: builder.query<{ totalPages: number; currentPage: number; items: IMarketItem[] }, { page: number; filters: any }>({
             query: ({ page, filters }) => {
                 const { name, rarity, sortBy, order } = filters;
                 return {
@@ -29,12 +29,12 @@ export const marketplaceApi = api.injectEndpoints({
             }),
         }),
         sellItem: builder.mutation<{ success: boolean }, { item: IMarketItem; price: number }>({
-    query: ({ item, price }) => ({
-        url: `/marketplace/`,
-        method: 'POST',
-        body: { id: item.uniqueId, price } // Используем uniqueId вместо id
-    }),
-}),
+            query: ({ item, price }) => ({
+                url: `/marketplace/`,
+                method: 'POST',
+                body: { id: item.uniqueId, price } // Используем uniqueId вместо id
+            }),
+        }),
         buyItem: builder.mutation<{ success: boolean }, number>({
             query: (id) => ({
                 url: `/marketplace/buy/${id}`,

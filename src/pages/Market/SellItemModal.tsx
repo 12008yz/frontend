@@ -8,8 +8,9 @@ import { toast } from "react-toastify";
 import Skeleton from "react-loading-skeleton";
 import Pagination from "../../components/Pagination";
 import Filters from "./Filters";
-import { FiFilter } from 'react-icons/fi'
+import { FiFilter } from 'react-icons/fi';
 import Modal from "../../components/Modal";
+import { userApi } from '../../app/services/users/UserServicer'; // Импортируем userApi
 
 interface Props {
   isOpen: boolean;
@@ -77,6 +78,10 @@ const SellItemModal: React.FC<Props> = ({ isOpen, onClose, setRefresh }) => {
       await sellItem({ item: selectedItem.uniqueId, price: price || 0 });
       setRefresh && setRefresh(true);
       toast.success("Item listed for sale!", {});
+
+      // Обновляем данные пользователя после успешной продажи
+      userApi.endpoints.getMe.initiate(); // Запрос для получения актуальных данных о пользователе
+
       CloseModal();
     } catch (error: any) {
       console.log(error);
