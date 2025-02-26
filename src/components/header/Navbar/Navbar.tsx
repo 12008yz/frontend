@@ -16,13 +16,7 @@ import { selectUser } from '../../../features/authSlice';
 const Navbar: React.FC = () => {
   const {toggleUserFlow} = useUserContext();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [openNotifications, setOpenNotifications] = useState(false);
   const user = useSelector(selectUser);
-  const [, forceUpdate] = useState({});
-
-  useEffect(() => {
-    forceUpdate({});
-  }, [user]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -69,7 +63,7 @@ const Navbar: React.FC = () => {
           </div>
           { user ? (
             <RightContent />
-          ):(
+          ):( 
             <div className="flex items-center gap-4">
               <MainButton text="Sign In" onClick={toggleUserFlow} />
             </div>

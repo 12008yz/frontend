@@ -2,7 +2,6 @@ import { createSlice } from '@reduxjs/toolkit';
 import { gamesApi } from '../app/services/games/GamesServices';
 import { userApi } from '../app/services/users/UserServicer';
 import { BasicItem } from '../app/types';
-import { useDispatch } from 'react-redux';
 
 interface OpenBoxResult {
   success: boolean;
@@ -56,6 +55,8 @@ const gamesSlice = createSlice({
         state.gameResults = action.payload;
         state.loading = false;
         state.error = null;
+        // Обновление данных пользователя после успешного открытия коробки
+        userApi.endpoints.getMe.initiate();
       })
       .addMatcher(gamesApi.endpoints.openBox.matchRejected, (state, action) => {
         state.loading = false;
@@ -68,6 +69,8 @@ const gamesSlice = createSlice({
       .addMatcher(gamesApi.endpoints.upgradeItem.matchFulfilled, (state) => {
         state.loading = false;
         state.error = null;
+        // Обновление данных пользователя после успешного улучшения предмета
+        userApi.endpoints.getMe.initiate();
       })
       .addMatcher(gamesApi.endpoints.upgradeItem.matchRejected, (state, action) => {
         state.loading = false;
@@ -80,6 +83,8 @@ const gamesSlice = createSlice({
       .addMatcher(gamesApi.endpoints.spinSlots.matchFulfilled, (state) => {
         state.loading = false;
         state.error = null;
+        // Обновление данных пользователя после успешного вращения слотов
+        userApi.endpoints.getMe.initiate();
       })
       .addMatcher(gamesApi.endpoints.spinSlots.matchRejected, (state, action) => {
         state.loading = false;

@@ -31,6 +31,7 @@ const userSlice = createSlice({
         // Auth actions
         builder
             .addMatcher(userApi.endpoints.getMe.matchFulfilled, (state, action) => {
+                console.log("Данные пользователя из getMe:", action.payload); // Лог для отладки
                 state.user = action.payload || null;
                 state.loading = false;
                 state.error = null;

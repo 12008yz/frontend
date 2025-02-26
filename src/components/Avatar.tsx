@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Skeleton from "react-loading-skeleton";
 import { Link } from "react-router-dom";
 
-interface Avatar {
+interface AvatarProps {
     image: string; // используйте изображения из public/image
     id: number;
     size: 'small' | 'medium' | 'large' | 'extra-large';
@@ -11,8 +11,12 @@ interface Avatar {
     showLevel?: boolean;
 }
 
-const Avatar: React.FC<Avatar> = ({ image, loading, id, size, level, showLevel = false }) => {
+const Avatar: React.FC<AvatarProps> = ({ image, loading, id, size, level, showLevel = false }) => {
     const [loaded, setLoaded] = useState<boolean>(false);
+
+    useEffect(() => {
+        console.log("Avatar props updated:", { image, loading, level });
+    }, [image, loading, level]);
 
     let sizeClasses, skeletonSize;
     switch (size) {
@@ -35,25 +39,16 @@ const Avatar: React.FC<Avatar> = ({ image, loading, id, size, level, showLevel =
     }
 
     const getLevelColor = () => {
-        if (level >= 0 && level <= 10) {
-            return '#3b82f6';
-        } else if (level >= 11 && level <= 20) {
-            return '#0066FF';
-        } else if (level >= 21 && level <= 35) {
-            return '#A100FF';
-        } else if (level >= 36 && level <= 50) {
-            return '#FF00FF';
-        } else if (level >= 51 && level <= 75) {
-            return '#FF0066';
-        } else if (level >= 76 && level <= 99) {
-            return '#FF0000';
-        } else if (level >= 100) {
-            return '#FFCC00';
-        }
+        if (level >= 0 && level <= 10) return '#3b82f6';
+        if (level >= 11 && level <= 20) return '#0066FF';
+        if (level >= 21 && level <= 35) return '#A100FF';
+        if (level >= 36 && level <= 50) return '#FF00FF';
+        if (level >= 51 && level <= 75) return '#FF0066';
+        if (level >= 76 && level <= 99) return '#FF0000';
+        return '#FFCC00'; // level >= 100
     }
 
     let LevelSize, DivPosition;
-
     switch (size) {
         case 'small':
             LevelSize = 'w-5 h-5';
@@ -84,8 +79,8 @@ const Avatar: React.FC<Avatar> = ({ image, loading, id, size, level, showLevel =
                     baseColor="#1c1a31"
                 />
             ) : (
-                <Link to={`/profile/${id}`} onClick={() => window.location.href = `/profile/${id}`}>
-                     {!loaded && (
+                <Link to={`/profile/${id}`}>
+                    {!loaded && (
                         <Skeleton
                             circle={true}
                             height={40}
@@ -93,30 +88,20 @@ const Avatar: React.FC<Avatar> = ({ image, loading, id, size, level, showLevel =
                             highlightColor="#161427"
                             baseColor="#1c1a31"
                         />
-                    )} 
-
+                    )}
                     <div className="relative">
                         <img
-                            src={image ? image : "https://i.imgur.com/uUfJSwW.png"}
+                            src={image || "https://i.imgur.com/uUfJSwW.png"}
                             alt="avatar"
                             className={`${sizeClasses} rounded-full object-cover border-2 aspect-square ${loaded ? '' : 'hidden'}`}
-                            style={{
-                                borderColor: getLevelColor()
-                            }}
+                            style={{ borderColor: getLevelColor() }}
                             onLoad={() => setLoaded(true)}
                         />
-                        {
-                            showLevel && (
-                                <div className={`absolute rounded-full text-xs font-semibold min-w-[20px] h-5 flex justify-center items-center text-white
-                                ${LevelSize} ${DivPosition}`}
-                                    style={{
-                                        backgroundColor: getLevelColor()
-                                    }}
-                                >
-                                    {level}
-                                </div>
-                            )
-                        }
+                        {showLevel && (
+                            <div className={`absolute rounded-full text-xs font-semibold min-w-[20px] h-5 flex justify-center items-center text-white ${LevelSize} ${DivPosition}`} style={{ backgroundColor: getLevelColor() }}>
+                                {level}
+                            </div>
+                        )}
                     </div>
                 </Link>
             )}

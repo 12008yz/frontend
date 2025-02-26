@@ -6,29 +6,35 @@ import { IoMdExit } from "react-icons/io";
 import { BiWallet } from "react-icons/bi";
 import Monetary from "../../Monetary";
 import { useDispatch, useSelector } from 'react-redux';
-import { logoutAction } from "../../../features/authSlice";
-import { useGetNotificationsQuery } from '../../../app/services/users/UserServicer';
+import { logoutAction, updateUser } from "../../../features/authSlice";
+import { useGetNotificationsQuery, useGetMeQuery } from '../../../app/services/users/UserServicer';
 import Notifications from './Notitfications';
 import { RootState } from '../../../app/store';
-import { useNavigate } from "react-router-dom";
 import { localStorageService } from "../../../utils/localStorage";
 
 const RightContent = () => {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     
-    // Получаем данные пользователя и состояние загрузки одним селектором
-    const { user: userData, loading: isLoading } = useSelector((state: RootState) => ({
-        user: state.auth.user,
-        loading: state.auth.loading
-    }));
+    // Получаем данные пользователя
+    const { data: userMeData, isLoading: isMeLoading, error: userError } = useGetMeQuery();
+    
+    // Обновляем состояние пользователя в Redux, если данные загружены
+    useEffect(() => {
+        if (userMeData) {
+            console.log("Обновление пользователя:", userMeData); // Лог для отладки
+            dispatch(updateUser(userMeData));
+        }
+        if (userError) {
+            console.error("Ошибка получения данных пользователя:", userError);
+        }
+    }, [userMeData, userError, dispatch]);
+    
+    // Получаем данные пользователя из Redux
+    const user = useSelector((state: RootState) => state.user.user);
     
     // Состояния для уведомлений
     const [hasUnreadNotifications, setHasUnreadNotifications] = useState(false);
     const [openNotifications, setOpenNotifications] = useState(false);
-    
-    // Проверяем мобильное устройство
-    const isMobile = window.innerWidth <= 768;
     
     // Получаем уведомления
     const { data: notifications = [] } = useGetNotificationsQuery(1);
@@ -42,29 +48,25 @@ const RightContent = () => {
     // Обработка выхода
     const handleLogout = () => {
         dispatch(logoutAction());
-        navigate('/');
     };
-
-    // Если идет загрузка, показываем индикатор
-    if (isLoading) return <div>Загрузка...</div>;
 
     return (
         <div className="flex items-center gap-4">
             {/* Бонус */}
-            {userData?.nextBonus && (
+            {user?.nextBonus && (
                 <div className="hidden md:flex">
-                    <ClaimBonus bonusDate={userData.nextBonus} userData={userData} />
+                    <ClaimBonus bonusDate={user.nextBonus} userData={user} />
                 </div>
             )}
 
             {/* Основной контент */}
-            {userData && (
+            {user && (
                 <>
                     {/* Баланс */}
                     <div className="flex items-center gap-2 text-green-400 font-normal text-lg hover:text-green-300 transition-all">
                         <BiWallet className="text-2xl hidden md:block" />
                         <div className="max-w-[80px] md:max-w-[140px] overflow-hidden text-sm md:text-lg truncate">
-                            <Monetary value={Math.floor(userData.walletBalance)} />
+                            <Monetary value={Math.floor(user.walletBalance)} />
                         </div>
                     </div>
 
@@ -85,16 +87,16 @@ const RightContent = () => {
                     <div className="flex items-center gap-2">
                         <div>
                             <Avatar 
-                                image={userData.profilePicture} 
-                                loading={isLoading} 
-                                id={userData.id} 
-                                size={isMobile ? "small" : "medium"} 
-                                level={userData.level} 
+                                image={user.profilePicture} 
+                                loading={isMeLoading} 
+                                id={user.id} 
+                                size="medium" 
+                                level={user.level} 
                                 showLevel={true} 
                             />
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-sm font-medium">{userData.username}</span>
+                            <span className="text-sm font-medium">{user.username}</span>
                         </div>
                     </div>
                 </>
