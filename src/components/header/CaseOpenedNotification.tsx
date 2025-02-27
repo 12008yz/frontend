@@ -91,15 +91,15 @@ const CaseOpenedNotification: React.FC<CaseOpenedNotificationProps> = ({
             }}
           />
           <Link to={`profile/${user.id}`} className="absolute -bottom-2 flex items-center">
-            <img
-              src={user.profilePicture}
-              alt={"user"}
-              className="w-12 h-12 z-10 object-cover rounded-full p-2 transition-all hover:scale-110"
-            />
-            <div className="z-10 text-base text-gray-200">
-              {user.name.length > 20 ? `${user.name.slice(0, 20)}...` : user.name}
-            </div>
-          </Link>
+  <img
+    src={user.profilePicture}
+    alt={"user"}
+    className="w-12 h-12 z-10 object-cover rounded-full p-2 transition-all hover:scale-110"
+  />
+  <div className="z-10 text-base text-gray-200">
+    {user && user.name && user.name.length > 20 ? `${user.name.slice(0, 20)}...` : user.name}
+  </div>
+</Link>
         </div>
       </div>
     </div>

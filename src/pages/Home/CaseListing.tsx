@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import CaseComponent from '../../components/Case'
 import {Case} from '../../app/types'
 import Title from '../../components/Title'
+import socket from "../../socket";
 
 interface CaseListingProps {
   name: string,
@@ -24,7 +25,13 @@ const CaseListing: React.FC<CaseListingProps> = ({
           cases.map((item) => {
             if (item.id) {
               return (
-                <Link to={`/case/${item.id}`} key={item.id}>
+                <Link to={`/case/${item.id}`} key={item.id} onClick={() => {
+                    socket.emit('itemDropped', {
+                        image: item.image,
+                        name: item.title,
+                        caseId: item.id,
+                    });
+                }}>
                   <CaseComponent
                     title={item.title}
                     image={item.image}
