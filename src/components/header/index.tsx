@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ModalProvider } from "../../ModalContext"; 
 import UserFlow from "./userFlow";
 import Navbar from "./Navbar/Navbar";
 import { ImConnection } from "react-icons/im";
@@ -67,21 +68,6 @@ const Header: React.FC<Header> = ({ onlineUsers, recentCaseOpenings, notificatio
     }
   }, [notification]);
 
-  // useEffect(() => {
-  //   if (recentCaseOpenings.length > 0) {
-  //     const newQueue = [];
-  //     const newItems = recentCaseOpenings.map((opening) => {
-  //       return {
-  //         items: opening.winningItems,
-  //         caseImages: [opening.caseImage],
-  //         user: opening.user,
-  //       };
-  //     });
-  //     newQueue.push(...newItems);
-  //     setItemsQueue(newQueue);
-  //   }
-  // }, [recentCaseOpenings]);
-
   return (
     <div className="flex flex-col p-4 w-screen justify-center ">
       <div className="flex pb-2 items-center">
@@ -101,9 +87,12 @@ const Header: React.FC<Header> = ({ onlineUsers, recentCaseOpenings, notificatio
         setOpenNotifications={setOpenNotifications} 
         openSidebar={openSidebar} 
         setOpenSidebar={setOpenSidebar} 
-        onlineUsers={onlineUsers} // Передаем количество онлафысЫФ Чйн пользователей
+        onlineUsers={onlineUsers} // Передаем количество онлайн пользователей
       />
-       <LiveDrop />
+      <ModalProvider>
+        <UserFlow />  {/* Обернуть UserFlow в ModalProvider */}
+      </ModalProvider>
+      <LiveDrop />
       {!isHome && (
         <div className="p-4">
           <div className="flex items-center gap-2 text-[#84819a] cursor-pointer w-fit" onClick={() => navigate(-1)}>
