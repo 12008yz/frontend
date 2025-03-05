@@ -35,6 +35,7 @@ const MarketItem: React.FC<Props> = ({ item }) => {
         onClick={() => window.location.href = `/marketplace/item/${item.id}`}
       />
     </div>
+    
   );
 };
 
