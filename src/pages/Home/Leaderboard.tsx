@@ -11,13 +11,6 @@ const Leaderboard = () => {
     console.log("Fetched users:", users); // Логирование полученных пользователей
     const [loading, setLoading] = useState(isLoading); // Устанавливаем состояние загрузки
 
-    useEffect(() => {
-        if (isLoading) {
-            setLoading(true);
-        } else {
-            setLoading(false);
-        }
-    }, [isLoading]);
 
     if (error) {
         console.error(error);

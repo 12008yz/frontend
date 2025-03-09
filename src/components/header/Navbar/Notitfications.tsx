@@ -20,7 +20,7 @@ interface Notification {
 const Notifications: React.FC<NotificationsProps> = ({ openNotifications, setOpenNotifications }) => {
     const notificationsRef = useRef(null);
     console.log("Состояние openNotifications:", openNotifications); // Логирование состояния
-    const { data: notifications = [], isLoading } = useGetNotificationsQuery(1); // Получаем уведомления для первой страницы
+    const { data: notifications = [],} = useGetNotificationsQuery(1); // Получаем уведомления для первой страницы
 
     const handleCloseNotifications = () => {
         setOpenNotifications(false);
@@ -31,13 +31,8 @@ const Notifications: React.FC<NotificationsProps> = ({ openNotifications, setOpe
     return (
         <div className={`bg-[#19172d] rounded absolute z-50 top-1 md:right-10 w-full md:w-80 min-h-[400px] ${openNotifications ? 'flex flex-col' : 'hidden'}`} ref={notificationsRef}>
             {
-                isLoading ? (
-                    <div className="flex justify-center items-center h-96"> 
-                        <p className="text-white">
-                            <RotatingLines strokeColor='#c3c4d9' width='50' />
-                        </p>
-                    </div>
-                ) : notifications.length > 0 ? (
+            
+               notifications.length > 0 ? (
                     notifications.map((notification: Notification, index: number) => (
                         <div key={index} className="flex flex-col p-4 border-b border-[#2a2942]">
                             <div className="flex justify-between">

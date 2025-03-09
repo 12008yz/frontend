@@ -19,13 +19,9 @@ export const marketplaceApi = api.injectEndpoints({
                 };
             },
         }),
-        getItemListings: builder.query<IMarketItem[], { itemId: number; page: number }>({
-            query: ({ itemId, page }) => ({
+        getItemListings: builder.query<IMarketItem, { itemId: number }>({
+            query: ({ itemId }) => ({
                 url: `/marketplace/item/${itemId}`,
-                params: {
-                    page,
-                    limit: 30
-                }
             }),
         }),
         sellItem: builder.mutation<{ success: boolean }, { item: IMarketItem; price: number }>({
@@ -41,7 +37,7 @@ export const marketplaceApi = api.injectEndpoints({
                 method: 'POST',
             }),
         }),
-        removeListing: builder.mutation<{ success: boolean }, number>({
+        removeListing: builder.mutation<{ success: boolean }, string>({
             query: (id) => ({
                 url: `/marketplace/${id}`,
                 method: 'DELETE',

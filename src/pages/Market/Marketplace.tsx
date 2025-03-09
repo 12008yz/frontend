@@ -57,14 +57,12 @@ const Marketplace: React.FC = () => {
         <Title title="Marketplace" />
 
         <div className="absolute md:right-24 -top-6 md:top-0">
-          {isLogged && (
             <div className="w-52">
               <MainButton
                 onClick={() => setOpenSellModal(true)}
                 text="Sell an item"
               />
             </div>
-          )}
         </div>
 
         <div className="flex flex-col md:flex-row items-center w-full justify-end gap-4 mt-4">
@@ -85,14 +83,9 @@ const Marketplace: React.FC = () => {
       }
       
       <div className="flex flex-wrap items-center gap-4 justify-center px-8 ">
-        {items.length === 0 ? (
-          Array(10)
-            .fill(0)
-            .map((_, i) => (
-              <div key={i} className="w-[226px] h-[334px]  ">
-                <Skeleton height={334} width={226} />
-              </div>
-            ))
+{items.length === 0 ? (
+          <div>Предметов нет</div>
+
         ) : (
           <div className="flex flex-wrap items-center gap-4 justify-center px-8  max-w-[1600px]">
             {items.map((item) => (
@@ -103,15 +96,9 @@ const Marketplace: React.FC = () => {
             ))}
           </div>
         )}
-        {
-          items.length > 0 && (
-            <Pagination totalPages={Math.ceil(items.length / 10)} currentPage={page} setPage={setPage} />
-          )
-        }
       </div>
     </div>
   );
 };
 
 export default Marketplace;
-

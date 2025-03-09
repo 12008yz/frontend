@@ -14,7 +14,7 @@ const defaultRoutes = (
    <>
     <Route path="/" element={<Home />} />
     <Route path="/profile/:id" element={<Profile />} />
-    <Route path="/marketplace/item/:itemId" element={<ItemPage/>} />
+    <Route path="/marketplace/item/:id" element={<ItemPage/>} />
      <Route path="/marketplace" element={<Marketplace totalPages={0} currentPage={0} items={[]} />} />  
     <Route path="/case/:id" element={<CasePage />} />
     {/* <Route path="/coinflip" element={<CoinFlip />} /> */}

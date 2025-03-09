@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSellItemMutation } from "../../app/services/market/MarketServicer";
 import { useGetInventoryQuery } from "../../app/services/users/UserServicer";
-import { useUserContext } from "../../UserContext";
+import { useSelector } from "react-redux";
+import { RootState } from "../../app/store"; // Adjust the import based on your store setup
+
 import Item from "../../components/Item";
 import MainButton from "../../components/MainButton";
 import { toast } from "react-toastify";
@@ -49,11 +51,13 @@ const SellItemModal: React.FC<Props> = ({ isOpen, onClose, setRefresh }) => {
   });
   const delayDebounceFn = useRef<NodeJS.Timeout | null>(null);
 
-  const { user } = useUserContext();
+  const user = useSelector((state: RootState) => state.user.user); // Access the user object directly
+
   const [sellItem] = useSellItemMutation();
   if (!user) {
-    return null; // или верните какой-то fallback UI
-}
+    return null; // or return some fallback UI
+  }
+
   const { data: inventoryData, isLoading, isFetching } = useGetInventoryQuery({ id: user.id, page, filters });
 
   const CloseModal = () => {
@@ -104,9 +108,7 @@ const SellItemModal: React.FC<Props> = ({ isOpen, onClose, setRefresh }) => {
     }
   }, [isOpen, page]);
 
-  useEffect(() => {
-    setLoadingInventory(isLoading || isFetching);
-  }, [isLoading, isFetching]);
+
 
   if (!isOpen) {
     return null;
