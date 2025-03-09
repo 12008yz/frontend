@@ -82,13 +82,11 @@ const ItemPage: React.FC = () => {
       />
       <h1 className="text-3xl font-bold mb-6">Item Listings</h1>
       {item ? (
-        <Item
-          key={item.uniqueId} // Используем uniqueId для ключа
-          item={item}
-          click={() => buyItem(item)}
-          remove={() => removeItem(item)}
-          loadingRemoval={loadingRemoval}
-        />
+      <Item
+        key={item.uniqueId} // Используем uniqueId для ключа
+        item={item}
+      />
+
       ) : (
         <div className="flex flex-col items-center justify-center w-full">
           <h1 className="text-2xl font-bold text-center">

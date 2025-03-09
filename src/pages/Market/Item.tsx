@@ -4,24 +4,32 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../app/store"; // Adjust the import based on your store setup
 import { Link } from "react-router-dom";
 import { IMarketItem } from "../../app/types";
+import { useBuyItemMutation } from "../../app/services/market/MarketServicer"; // Импортируем хук buyItem
 
 interface Props {
   item: IMarketItem;
-  click: () => void;
-  remove: () => void;
-  loadingRemoval: boolean;
 }
 
-const MarketItem: React.FC<Props> = ({ item, click, remove, loadingRemoval }) => {
+const MarketItem: React.FC<Props> = ({ item }) => {
   const user = useSelector((state: RootState) => state.user.user); // Access the user object directly
   const [loading, setLoading] = useState<boolean>(true);
+  const [buyItem] = useBuyItemMutation(); // Инициализируем мутацию buyItem
 
   const handleImageLoad = () => {
     setLoading(false);
   };
 
   const isFromLoggedUser = user && user.id === item.sellerId.id; // Check if user exists before accessing id
-  console.log('данные в Item.tsx', item);
+
+  const handleBuy = async () => {
+    try {
+      await buyItem(item.id).unwrap(); // Используем unwrap для обработки результата
+
+      console.log("Item purchased successfully");
+    } catch (error) {
+      console.error("Failed to purchase item:", error);
+    }
+  };
 
   return (
     <div className="border border-[#161448] rounded-lg p-4 bg-gradient-to-tr from-[#1D1730] to-[#141333] transition-all duration-500 ease-in-out w-[226px] h-[334px]">
@@ -49,9 +57,8 @@ const MarketItem: React.FC<Props> = ({ item, click, remove, loadingRemoval }) =>
           .format(item.price)
           .replace("DOL", "K₽")}
       </p>
-      <MainButton text={isFromLoggedUser ? "Remove" : "Buy"} onClick={
-        click && (isFromLoggedUser ? remove : click)
-      } disabled={loadingRemoval} />
+      <MainButton text="Buy" onClick={handleBuy} disabled={loading} /> 
+
     </div>
   );
 };
