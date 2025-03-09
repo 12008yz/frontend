@@ -39,6 +39,7 @@ const ItemPage: React.FC = () => {
     itemId: Number(id), // Ensure this uses the correct uniqueId
   });
 
+
   console.log("Received itemsData:", itemsData);
 
 
@@ -46,6 +47,16 @@ const ItemPage: React.FC = () => {
     setSelectedItem(item);
     setOpenBuyModal(true);
   };
+
+  useEffect(() => {
+    if (itemsData) {
+      console.log("Setting item with data:", itemsData); // Log the data being set
+      setItem(itemsData); // Set the item directly
+    } else {
+      console.error("Invalid item data:", itemsData);
+    }
+  }, [itemsData]);
+
 
   const removeItem = async (item: IMarketItem) => {
     setLoadingRemoval(true);
@@ -85,6 +96,7 @@ const ItemPage: React.FC = () => {
           </h1>
         </div>
       )}
+
     </div>
   );
 };

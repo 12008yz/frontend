@@ -21,6 +21,7 @@ const MarketItem: React.FC<Props> = ({ item, click, remove, loadingRemoval }) =>
   };
 
   const isFromLoggedUser = user && user.id === item.sellerId.id; // Check if user exists before accessing id
+  console.log('данные в Item.tsx', item);
 
   return (
     <div className="border border-[#161448] rounded-lg p-4 bg-gradient-to-tr from-[#1D1730] to-[#141333] transition-all duration-500 ease-in-out w-[226px] h-[334px]">
