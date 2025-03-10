@@ -24,7 +24,6 @@ const Marketplace: React.FC = () => {
   });
   const [openFilters, setOpenFilters] = useState<boolean>(false);
 
-  const { isLogged } = useUserContext();
 
   const { data: itemsData } = useGetItemsQuery({ page, filters });
   useEffect(() => {
@@ -47,7 +46,8 @@ const Marketplace: React.FC = () => {
   }, [page]);
 
   return (
-    <div className="flex flex-col items-center justify-center ">
+    <div className="flex flex-col items-center h-screen">
+
       <SellItemModal
         isOpen={openSellModal}
         onClose={() => setOpenSellModal(false)}

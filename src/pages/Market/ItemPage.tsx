@@ -70,7 +70,8 @@ const ItemPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col w-screen items-center justify-center">
+    <div className="flex flex-col w-screen items-center min-h-screen">
+
       <SellItemModal
         isOpen={openSellModal}
         onClose={() => setOpenSellModal(false)}

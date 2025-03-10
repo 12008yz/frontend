@@ -1,10 +1,14 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Импортируем useNavigate
+
+
 import MainButton from "../../components/MainButton";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store"; // Adjust the import based on your store setup
 import { Link } from "react-router-dom";
 import { IMarketItem } from "../../app/types";
 import { useBuyItemMutation } from "../../app/services/market/MarketServicer"; // Импортируем хук buyItem
+import { useGetProfileQuery } from "../../app/services/users/UserServicer"; // Импортируем хук для получения профиля
 
 interface Props {
   item: IMarketItem;
@@ -15,17 +19,27 @@ const MarketItem: React.FC<Props> = ({ item }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [buyItem] = useBuyItemMutation(); // Инициализируем мутацию buyItem
 
+  const { data: sellerProfile } = useGetProfileQuery(String(item.sellerId)); // Получаем профиль продавца, передавая sellerId как строку
+
   const handleImageLoad = () => {
     setLoading(false);
   };
 
-  const isFromLoggedUser = user && user.id === item.sellerId.id; // Check if user exists before accessing id
+  const isFromLoggedUser = user && user.id === item.sellerId; // Check if user exists before accessing id
+
+  const navigate = useNavigate(); // Инициализируем useNavigate
+
 
   const handleBuy = async () => {
+    // Логика покупки
+
     try {
       await buyItem(item.id).unwrap(); // Используем unwrap для обработки результата
 
       console.log("Item purchased successfully");
+      navigate("/marketplace"); // Перенаправляем на страницу marketplace
+
+
     } catch (error) {
       console.error("Failed to purchase item:", error);
     }
@@ -37,8 +51,8 @@ const MarketItem: React.FC<Props> = ({ item }) => {
         <span className="text-lg font-semibold text-white truncate">
           {item.itemName}
         </span>
-        <Link to={`/profile/${item.sellerId.id}`}>
-          <span className="text-xs text-white underline truncate">({item.sellerId.username})</span>
+        <Link to={`/profile/${item.sellerId}`}>
+          <span className="text-xs text-white underline truncate">({sellerProfile?.username || "Unknown"})</span> {/* Используем имя продавца из профиля */}
         </Link>
       </div>
       <img
@@ -58,7 +72,6 @@ const MarketItem: React.FC<Props> = ({ item }) => {
           .replace("DOL", "K₽")}
       </p>
       <MainButton text="Buy" onClick={handleBuy} disabled={loading} /> 
-
     </div>
   );
 };
