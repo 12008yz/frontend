@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useSellItemMutation } from "../../app/services/market/MarketServicer";
+import { marketplaceApi, useSellItemMutation } from "../../app/services/market/MarketServicer";
 import { useGetInventoryQuery } from "../../app/services/users/UserServicer";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store"; // Adjust the import based on your store setup
@@ -58,10 +58,11 @@ const SellItemModal: React.FC<Props> = ({ isOpen, onClose, setRefresh }) => {
     return null; // or return some fallback UI
   }
 
-  const { data: inventoryData, isLoading, isFetching } = useGetInventoryQuery({ id: user.id, page, filters });
+  const { data: inventoryData, isLoading, isFetching } = useGetInventoryQuery({ id: user.id, filters });
 
   const CloseModal = () => {
     if (user) {
+      console.log('Закрытие модального окна продажи');
       setSelectedItem(null);
       setPrice(0);
       setInvItems([]);
@@ -71,16 +72,31 @@ const SellItemModal: React.FC<Props> = ({ isOpen, onClose, setRefresh }) => {
   };
 
   const handleSubmit = async () => {
+    console.log('Начало процесса продажи');
     setLoadingButton(true);
 
     if (price && (price < 0 || price > 1000000)) {
+      console.log('Ошибка: цена вне допустимого диапазона');
       setLoadingButton(false);
       return toast.error("Price must be between 0 and 1.000.000", {});
     }
 
     try {
-      await sellItem({ item: selectedItem.uniqueId, price: price || 0 });
+      console.log('Отправка запроса на продажу', {
+        item: selectedItem,
+        price: price || 0
+      });
+      
+      if (!selectedItem?.uniqueId) {
+        throw new Error('UniqueId is required');
+      }
+      await sellItem({ item: selectedItem, price: price || 0 });
+      console.log('Предмет успешно выставлен на продажу');
+      
+      // Обновляем данные маркетплейса
       setRefresh && setRefresh(true);
+      userApi.endpoints.getMe.initiate();
+      marketplaceApi.endpoints.getItems.initiate({ page: 1, filters: {} });
       toast.success("Item listed for sale!", {});
 
       // Обновляем данные пользователя после успешной продажи
@@ -88,21 +104,25 @@ const SellItemModal: React.FC<Props> = ({ isOpen, onClose, setRefresh }) => {
 
       CloseModal();
     } catch (error: any) {
-      console.log(error);
+      console.error('Ошибка при продаже предмета:', error);
       toast.error(error.response.data.message);
     }
     setLoadingButton(false);
   };
 
   useEffect(() => {
+    console.log('Получены данные инвентаря');
     if (inventoryData) {
-      setInventory(inventoryData);
+      console.log('Обновление состояния инвентаря');
+      setInvItems(inventoryData.items);
       setLoadingInventory(false);
     }
   }, [inventoryData]);
 
   useEffect(() => {
+    console.log('Изменение состояния модального окна или страницы');
     if (isOpen) {
+      console.log('Открытие модального окна продажи');
       setInvItems([]);
       setLoadingInventory(true);
     }
@@ -141,9 +161,11 @@ const SellItemModal: React.FC<Props> = ({ isOpen, onClose, setRefresh }) => {
                   event.preventDefault();
                 }
               }}
-              onChange={
-                (e) => setPrice(parseInt(e.target.value) || 0)
-              }
+              onChange={(e) => {
+                const newPrice = parseInt(e.target.value) || 0;
+                console.log('Изменение цены:', newPrice);
+                setPrice(newPrice);
+              }}
             />
           </div>
           {selectedItem && (
@@ -174,7 +196,14 @@ const SellItemModal: React.FC<Props> = ({ isOpen, onClose, setRefresh }) => {
                 <div
                   className="w-1/4 p-2 cursor-pointer"
                   key={item.id + index}
-                  onClick={() => setSelectedItem(item)}
+                onClick={() => {
+                  console.log('Выбран предмет для продажи:', item);
+                  if (!item?.uniqueId) {
+                    console.error('UniqueId отсутствует у выбранного предмета');
+                    return;
+                  }
+                  setSelectedItem(item);
+                }}
                 >
                   <Item item={item} size="small" />
                 </div>

@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom"; // Импортируем useNav
 
 
 import MainButton from "../../components/MainButton";
+import { toast } from "react-toastify"; // Импортируем toast
+
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store"; // Adjust the import based on your store setup
 import { Link } from "react-router-dom";
@@ -36,7 +38,9 @@ const MarketItem: React.FC<Props> = ({ item }) => {
     try {
       await buyItem(item.id).unwrap(); // Используем unwrap для обработки результата
 
+      toast.success("Вы успешно купили предмет"); // Уведомление о покупке
       console.log("Item purchased successfully");
+
       navigate("/marketplace"); // Перенаправляем на страницу marketplace
 
 

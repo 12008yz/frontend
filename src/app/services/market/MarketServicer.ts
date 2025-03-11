@@ -25,11 +25,21 @@ export const marketplaceApi = api.injectEndpoints({
             }),
         }),
         sellItem: builder.mutation<{ success: boolean }, { item: IMarketItem; price: number }>({
-            query: ({ item, price }) => ({
-                url: `/marketplace/`,
-                method: 'POST',
-                body: { id: item.uniqueId, price } // Используем uniqueId вместо id
-            }),
+            query: ({ item, price }) => {
+                if (!item?.uniqueId) {
+                    throw new Error('UniqueId is required');
+                }
+                console.log('Отправка данных на продажу:', { uniqueId: item.uniqueId, price });
+                return {
+                    url: `/marketplace/`,
+                    method: 'POST',
+                    body: { uniqueId: item.uniqueId, price },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                };
+            },
         }),
         buyItem: builder.mutation<{ success: boolean }, number>({
             query: (id) => ({

@@ -11,13 +11,13 @@ export const userApi = api.injectEndpoints({
             query: (id) => `/users/${id}`,
             providesTags: [{ type: 'Profile', id: 'LIST' }],
         }),
-        getInventory: builder.query<any, { id: number; page?: number; filters?: any }>({
-            query: ({ id, page = 1, filters }) => {
-                let url = `/users/inventory/${id}?page=${page}`;
+        getInventory: builder.query<any, { id: number; filters?: any }>({
+            query: ({ id, filters }) => {
+                let url = `/users/inventory/${id}?`; 
                 if (filters) {
                     for (const key in filters) {
                         if (filters[key]) {
-                            url += `&${key}=${filters[key]}`;
+                            url += `${url.includes('?') ? '&' : '?'}${key}=${filters[key]}`;
                         }
                     }
                 }
