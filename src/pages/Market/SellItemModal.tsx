@@ -188,7 +188,7 @@ const SellItemModal: React.FC<Props> = ({ isOpen, onClose, setRefresh }) => {
             {loadingInventory ? (
               [1, 2, 3, 4].map((item) => (
                 <div className="w-1/4 p-2" key={item}>
-                  <Skeleton height={120} />
+                  <p>Загрузка...</p>
                 </div>
               ))
             ) : (

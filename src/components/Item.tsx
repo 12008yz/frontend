@@ -48,19 +48,10 @@ const Item: React.FC<itemProps> = ({ item, fixable, setRefresh, size = "large" }
       onMouseLeave={() => setHovering(false)}
     >
       <div className="overflow-hidden">
-        {!loaded && <div className={`flex  ${ItemsWidthSize} ${ItemHeightSize} items-center justify-center`}>
-          <RotatingLines
-            strokeColor="grey"
-            strokeWidth="5"
-            animationDuration="0.75"
-            width="50px"
-            visible={true}
-          />
-        </div>}
         <img
           src={item?.image}
           alt={item?.name}
-          className={`${ItemsWidthSize} ${ItemHeightSize} hover:scale-105 transition-all object-contain ${loaded ? '' : 'hidden'}`}
+          className={`${ItemsWidthSize} ${ItemHeightSize} hover:scale-105 transition-all object-contain`}
           onLoad={() => setLoaded(true)}
         />
         <div
