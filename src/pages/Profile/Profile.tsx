@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import { useGetProfileQuery } from "../../app/services/users/UserServicer";
 import UserInfo from "./UserInfo";
 import FixedItem from "./FixedItem";
@@ -22,8 +23,8 @@ interface SocketData {
 }
 const Profile = () => {
   const dispatch = useDispatch();
-  const id = window.location.pathname.split("/")[2];
-  const { data: profileData, isLoading: loadingProfile } = useGetProfileQuery(id);
+  const { id } = useParams();
+  const { data: profileData, isLoading: loadingProfile } = useGetProfileQuery(id!.toString());
   const profile = useSelector((state: RootState) => state.profile.profile);
   
   const [invItems, setInvItems] = useState<any[]>([]);
@@ -70,7 +71,7 @@ const Profile = () => {
       socket.off('disconnect');
       socket.off('data');
     };
-  }, [profileData, dispatch, page]);
+  }, [profileData, dispatch, page, id]);
 
   return (
     <div className="flex flex-col items-center w-screen">

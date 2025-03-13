@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { marketplaceApi, useSellItemMutation } from "../../app/services/market/MarketServicer";
 import { useGetInventoryQuery } from "../../app/services/users/UserServicer";
 import { useSelector } from "react-redux";
@@ -53,6 +54,7 @@ const SellItemModal: React.FC<Props> = ({ isOpen, onClose, setRefresh }) => {
 
   const user = useSelector((state: RootState) => state.user.user); // Access the user object directly
 
+  const navigate = useNavigate();
   const [sellItem] = useSellItemMutation();
   if (!user) {
     return null; // or return some fallback UI
@@ -103,6 +105,7 @@ const SellItemModal: React.FC<Props> = ({ isOpen, onClose, setRefresh }) => {
       userApi.endpoints.getMe.initiate(); // Запрос для получения актуальных данных о пользователе
 
       CloseModal();
+      navigate('/');
     } catch (error: any) {
       console.error('Ошибка при продаже предмета:', error);
       toast.error(error.response.data.message);
@@ -186,7 +189,7 @@ const SellItemModal: React.FC<Props> = ({ isOpen, onClose, setRefresh }) => {
         <div className="flex flex-col justify-center max-h-[190px]  gap-4 ">
           <div className="flex flex-wrap justify-center gap-4 overflow-auto overflow-x-hidden mt-4 ">
             {loadingInventory ? (
-              [1, 2, 3, 4].map((item) => (
+              [1].map((item) => (
                 <div className="w-1/4 p-2" key={item}>
                   <p>Загрузка...</p>
                 </div>

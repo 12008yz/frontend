@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Skeleton from "react-loading-skeleton";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface AvatarProps {
     image: string; // используйте изображения из public/image
@@ -12,6 +12,7 @@ interface AvatarProps {
 }
 
 const Avatar: React.FC<AvatarProps> = ({ image, loading, id, size, level, showLevel = false }) => {
+  const navigate = useNavigate();
     const [loaded, setLoaded] = useState<boolean>(false);
 
     useEffect(() => {
@@ -79,7 +80,7 @@ const Avatar: React.FC<AvatarProps> = ({ image, loading, id, size, level, showLe
                     baseColor="#1c1a31"
                 />
             ) : (
-                <Link to={`/profile/${id}`}>
+                <div onClick={() => navigate(`/profile/${id}`)} style={{ cursor: 'pointer' }}>
                     {!loaded && (
                         <Skeleton
                             circle={true}
@@ -103,7 +104,7 @@ const Avatar: React.FC<AvatarProps> = ({ image, loading, id, size, level, showLe
                             </div>
                         )}
                     </div>
-                </Link>
+                </div>
             )}
         </div>
     );

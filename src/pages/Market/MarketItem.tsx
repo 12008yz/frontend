@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import MainButton from "../../components/MainButton";
 import Rarities from "../../components/Rarities";
 import { IMarketItem } from "../../app/types"; // Импортируем тип IMarketItem
@@ -8,6 +9,7 @@ interface Props {
 }
 
 const MarketItem: React.FC<Props> = ({ item }) => {
+  const navigate = useNavigate();
   const color = item.itemName ? Rarities.find((rarity) => rarity.name === item.itemName)?.color || "white" : "white";
 
   return (
@@ -32,7 +34,7 @@ const MarketItem: React.FC<Props> = ({ item }) => {
       <MainButton
         textSize="text-sm"
         text={`Buy for ${item.price} KP`}
-        onClick={() => window.location.href = `/marketplace/item/${item.id}`}
+        onClick={() => navigate(`/marketplace/item/${item.id}`)}
       />
     </div>
     
