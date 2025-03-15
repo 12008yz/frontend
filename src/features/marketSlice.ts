@@ -67,6 +67,7 @@ const marketSlice = createSlice({
                 state.loading = false;
                 state.error = null;
             })
+            
             .addMatcher(marketplaceApi.endpoints.removeListing.matchRejected, (state, action) => {
                 state.loading = false;
                 state.error = action.error.message || null; // Обработка ошибки

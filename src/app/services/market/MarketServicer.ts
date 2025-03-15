@@ -41,7 +41,7 @@ export const marketplaceApi = api.injectEndpoints({
                 };
             },
         }),
-        buyItem: builder.mutation<{ success: boolean }, number>({
+        buyItem: builder.mutation<{ success: boolean; newBalance: number }, number>({
             query: (id) => ({
                 url: `/marketplace/buy/${id}`,
                 method: 'POST',

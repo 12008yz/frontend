@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { gamesApi } from '../app/services/games/GamesServices';
 import { userApi } from '../app/services/users/UserServicer';
 import { BasicItem } from '../app/types';
@@ -8,11 +8,43 @@ interface OpenBoxResult {
   items: BasicItem[];
 }
 
+interface CoinFlipState {
+  bets: {
+    heads: Record<string, number>;
+    tails: Record<string, number>;
+  };
+  choices: {
+    heads: Record<string, number>;
+    tails: Record<string, number>;
+  };
+  result: number | null;
+  gameState: {
+    heads: {
+      players: Record<string, any>;
+      bets: Record<string, number>;
+      choices: Record<string, number>;
+    };
+    tails: {
+      players: Record<string, any>;
+      bets: Record<string, number>;
+      choices: Record<string, number>;
+    };
+  };
+  history: Array<{ result: number }>;
+}
+
+interface User {
+  id: string;
+  walletBalance: number;
+}
+
 interface GamesState {
   loading: boolean;
   error: string | null;
   gameResults: OpenBoxResult | null;
   selectedItem: BasicItem | null;
+  coinFlip: CoinFlipState;
+  users: Record<string, User>;
 }
 
 const initialState: GamesState = {
@@ -20,6 +52,31 @@ const initialState: GamesState = {
   error: null,
   gameResults: null,
   selectedItem: null,
+  users: {},
+  coinFlip: {
+    bets: {
+      heads: {},
+      tails: {},
+    },
+    choices: {
+      heads: {},
+      tails: {},
+    },
+    result: null,
+    gameState: {
+      heads: {
+        players: {},
+        bets: {},
+        choices: {},
+      },
+      tails: {
+        players: {},
+        bets: {},
+        choices: {},
+      },
+    },
+    history: [],
+  },
 };
 
 const gamesSlice = createSlice({
@@ -43,6 +100,71 @@ const gamesSlice = createSlice({
     },
     clearSelectedItem(state) {
       state.selectedItem = null;
+    },
+    placeBet(state, action: PayloadAction<{ userId: string; bet: number; choice: number }>) {
+      const { userId, bet, choice } = action.payload;
+      const betType = choice === 0 ? 'heads' : 'tails';
+      state.coinFlip.bets[betType][userId] = bet;
+      
+      // Обновление баланса пользователя
+      const user = state.users[userId];
+      if (user) {
+        user.walletBalance -= bet;
+      }
+    },
+    makeChoice(state, action: PayloadAction<{ userId: string; choice: number }>) {
+      const { userId, choice } = action.payload;
+      const choiceType = choice === 0 ? 'heads' : 'tails';
+      state.coinFlip.choices[choiceType][userId] = choice;
+      
+      // Логирование выбора
+      console.log(`User ${userId} chose ${choiceType}`);
+    },
+    setCoinFlipResult(state, action: PayloadAction<number>) {
+      state.coinFlip.result = action.payload;
+    },
+    updateCoinFlipGameState(
+      state,
+      action: PayloadAction<{
+        heads: {
+          players: Record<string, any>;
+          bets: Record<string, number>;
+          choices: Record<string, number>;
+        };
+        tails: {
+          players: Record<string, any>;
+          bets: Record<string, number>;
+          choices: Record<string, number>;
+        };
+      }>
+    ) {
+      state.coinFlip.gameState = action.payload;
+    },
+    resetCoinFlipGame(state) {
+      state.coinFlip = {
+        bets: {
+          heads: {},
+          tails: {},
+        },
+        choices: {
+          heads: {},
+          tails: {},
+        },
+        result: null,
+        gameState: {
+          heads: {
+            players: {},
+            bets: {},
+            choices: {},
+          },
+          tails: {
+            players: {},
+            bets: {},
+            choices: {},
+          },
+        },
+        history: [],
+      };
     },
   },
   extraReducers: (builder) => {
@@ -99,7 +221,12 @@ export const {
   setGameResults, 
   setSelectedItem,
   clearGameResults,
-  clearSelectedItem
+  clearSelectedItem,
+  placeBet,
+  makeChoice,
+  setCoinFlipResult,
+  updateCoinFlipGameState,
+  resetCoinFlipGame
 } = gamesSlice.actions;
 
 // Селекторы
@@ -107,6 +234,7 @@ export const selectGameResults = (state: { games: GamesState }) => state.games.g
 export const selectSelectedItem = (state: { games: GamesState }) => state.games.selectedItem;
 export const selectGamesLoading = (state: { games: GamesState }) => state.games.loading;
 export const selectGamesError = (state: { games: GamesState }) => state.games.error;
+export const selectCoinFlipState = (state: { games: GamesState }) => state.games.coinFlip;
 
 export default gamesSlice.reducer;
 

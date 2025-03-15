@@ -1,27 +1,56 @@
-import { io } from "socket.io-client";
+import { io } from 'socket.io-client';
+import store from './app/store';
+import {
+  updateCoinFlipGameState,
+  setCoinFlipResult,
+} from './features/gamesSlice';
 
 // Подключение к серверу WebSocket
-const socket = io("http://localhost:3000", { // Изменено на имя сервиса
-  autoConnect: true, // Автоматическое подключение
-  reconnection: true, // Включение повторного подключения
-  reconnectionAttempts: Infinity, // Бесконечные попытки переподключения
-  reconnectionDelay: 1000, // Задержка перед повторным подключением
+const socket = io('http://localhost:3000', {
+  autoConnect: true,
+  reconnection: true,
+  reconnectionAttempts: Infinity,
+  reconnectionDelay: 1000,
 });
 
-// Обработка события подключения
-socket.on("connect", () => {
-  console.log("Connected to WebSocket server");
+// Обработчики событий подключения
+socket.on('connect', () => {
+  console.log('Connected to WebSocket server');
 });
 
-// Обработка события отключения
-socket.on("disconnect", () => {
-  console.log("Disconnected from WebSocket server");
+socket.on('disconnect', () => {
+  console.log('Disconnected from WebSocket server');
 });
 
-// Обработка ошибок
-socket.on("connect_error", (error) => {
-  console.error("WebSocket connection error:", error);
+socket.on('connect_error', (error) => {
+  console.error('WebSocket connection error:', error);
 });
 
-// Экспорт socket для использования в других частях приложения
+// Обработчики событий игры "Монетка"
+socket.on('coinFlip:gameState', (gameState) => {
+  store.dispatch(updateCoinFlipGameState(gameState));
+});
+
+socket.on('coinFlip:result', (result) => {
+  store.dispatch(setCoinFlipResult(result));
+});
+
+// Функции для управления сокетом
+export const connectSocket = () => {
+  socket.connect();
+};
+
+export const disconnectSocket = () => {
+  socket.disconnect();
+};
+
+// Функции для взаимодействия с игрой
+export const placeCoinFlipBet = (user: any, bet: number, choice: number) => {
+  socket.emit('coinFlip:bet', user, bet, choice);
+};
+
+export const makeCoinFlipChoice = (user: any, choice: number) => {
+  socket.emit('coinFlip:choice', user, choice);
+};
+
 export default socket;
