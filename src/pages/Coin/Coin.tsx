@@ -1,27 +1,25 @@
 import { useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
-import { useSelector } from 'react-redux';
-import { selectCoinFlipState } from '../../features/gamesSlice';
 
-import headsImg from '../../../public/coinHeads.webp';
-import tailsImg from '../../../public/coinTails.webp';
+import headsImg from '/assets/coinHeads.webp';
+import tailsImg from '/assets/coinTails.webp';
 
 interface CoinProps {
-  spinning: boolean;
-  result: number | null;
+    result: number | null;
+    spinning: boolean;
 }
 
-const Coin: React.FC<CoinProps> = ({ spinning, result }) => {
-  const { gameState } = useSelector(selectCoinFlipState);
-  const controls = useAnimation();
+const Coin: React.FC<CoinProps> = ({ result, spinning }) => {
+    const controls = useAnimation();
 
   useEffect(() => {
     const spinCoin = () => {
+      controls.stop();
       controls.set({ rotateY: 0 });
       controls.start({ 
         rotateY: 3600, 
         transition: { 
-          duration: 5, 
+          duration: 5, // Синхронизировано с сервером (5000 мс)
           ease: "linear" 
         } 
       });
@@ -30,35 +28,50 @@ const Coin: React.FC<CoinProps> = ({ spinning, result }) => {
     const slowSpin = () => {
       const finalRotation = result === 0 ? 3600 + 360 : 3600 + 540;
       controls.start({ 
-        rotateY: finalRotation, 
+        rotateY: finalRotation,
         transition: { 
-          duration: 2, 
+          duration: 1.2, // Синхронизировано с обновлением истории
           ease: [0.33, 1, 0.68, 1] 
         } 
       });
     };
 
-    if (gameState.heads.players || gameState.tails.players) {
+    if (spinning) {
       spinCoin();
     } else if (result !== null) {
       slowSpin();
+    } else {
+      // Сбрасываем анимацию, если игра не активна
+      controls.stop();
+      controls.set({ rotateY: 0 });
     }
-  }, [result, gameState, controls]);
+  }, [spinning, result, controls]);
 
-  return (
-    <div className="coin-container">
-      <motion.div className="coin" animate={controls}>
-        <div 
-          className="face front" 
-          style={{ backgroundImage: `url(${headsImg})` }} 
-        />
-        <div 
-          className="face back" 
-          style={{ backgroundImage: `url(${tailsImg})` }} 
-        />
-      </motion.div>
-    </div>
-  );
+    return (
+        <motion.div 
+            className="coin" 
+            animate={controls}
+            style={{
+                width: '200px',
+                height: '200px',
+                position: 'relative',
+                transformStyle: 'preserve-3d'
+            }}
+        >
+            <div 
+                className="face front" 
+                style={{ 
+                    backgroundImage: `url(${headsImg})`,
+                }} 
+            />
+            <div 
+                className="face back" 
+                style={{ 
+                    backgroundImage: `url(${tailsImg})`,
+                }} 
+            />
+        </motion.div>
+    );
 };
 
 export default Coin;

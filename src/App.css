@@ -8,3 +8,25 @@
   text-align: center;
   background-color: #151225;
 }
+.face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-size: cover;
+}
+
+.front {
+  transform: rotateY(180deg) translateZ(0.7em);
+}
+
+.back {
+  transform: rotateY(0deg) translateZ(0.7em);
+}
+
+.coin {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  transform-style: preserve-3d;
+}
