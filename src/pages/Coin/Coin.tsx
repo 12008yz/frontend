@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { useSelector } from 'react-redux';
 import { selectCoinFlipState } from '../../features/gamesSlice';
-import { placeCoinFlipBet, makeCoinFlipChoice } from '../../socket';
 
 import headsImg from '../../../public/coinHeads.webp';
 import tailsImg from '../../../public/coinTails.webp';
@@ -45,8 +44,6 @@ const Coin: React.FC<CoinProps> = ({ spinning, result }) => {
       slowSpin();
     }
   }, [result, gameState, controls]);
-
-  // Убрана функция handleBet, так как управление ставками теперь в CoinFlip.tsx
 
   return (
     <div className="coin-container">

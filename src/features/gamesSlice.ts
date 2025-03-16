@@ -31,6 +31,7 @@ interface CoinFlipState {
     };
   };
   history: Array<{ result: number }>;
+  isGameStarted: boolean;
 }
 
 interface User {
@@ -76,6 +77,7 @@ const initialState: GamesState = {
       },
     },
     history: [],
+    isGameStarted: false,
   },
 };
 
@@ -140,6 +142,9 @@ const gamesSlice = createSlice({
     ) {
       state.coinFlip.gameState = action.payload;
     },
+    startCoinFlipGame(state) {
+      state.coinFlip.isGameStarted = true;
+    },
     resetCoinFlipGame(state) {
       state.coinFlip = {
         bets: {
@@ -164,7 +169,15 @@ const gamesSlice = createSlice({
           },
         },
         history: [],
+        isGameStarted: false,
       };
+    },
+    updateUserData(state, action: PayloadAction<{ userId: string; walletBalance: number }>) {
+      const { userId, walletBalance } = action.payload;
+      const user = state.users[userId];
+      if (user) {
+        user.walletBalance = walletBalance;
+      }
     },
   },
   extraReducers: (builder) => {
@@ -226,7 +239,9 @@ export const {
   makeChoice,
   setCoinFlipResult,
   updateCoinFlipGameState,
-  resetCoinFlipGame
+  startCoinFlipGame,
+  resetCoinFlipGame,
+  updateUserData
 } = gamesSlice.actions;
 
 // Селекторы

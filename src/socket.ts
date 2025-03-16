@@ -3,6 +3,8 @@ import store from './app/store';
 import {
   updateCoinFlipGameState,
   setCoinFlipResult,
+  startCoinFlipGame,
+  updateUserData,
 } from './features/gamesSlice';
 
 // Подключение к серверу WebSocket
@@ -33,6 +35,14 @@ socket.on('coinFlip:gameState', (gameState) => {
 
 socket.on('coinFlip:result', (result) => {
   store.dispatch(setCoinFlipResult(result));
+});
+
+socket.on('coinFlip:start', () => {
+  store.dispatch(startCoinFlipGame());
+});
+
+socket.on('userDataUpdated', (userData) => {
+  store.dispatch(updateUserData(userData));
 });
 
 // Функции для управления сокетом
