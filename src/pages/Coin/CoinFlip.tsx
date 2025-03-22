@@ -29,7 +29,7 @@ const CoinFlip = () => {
   const user = useSelector((state: any) => state.user.user);
 
   const handleBet = () => {
-    if (!choice || bet <= 0) return;
+    if (choice === null || bet <= 0) return;
     
     if (!user) {
       console.error('User not found');
@@ -48,6 +48,7 @@ const CoinFlip = () => {
     makeCoinFlipChoice(user, choice);
     
     setUserGambled(true);
+    console.log(`User choice: ${choice === 0 ? "Heads" : "Tails"}, Bet: K₽${bet}`); // Лог выбора пользователя
   };
 
   useEffect(() => {
@@ -61,15 +62,19 @@ const CoinFlip = () => {
   useEffect(() => {
     if (result !== null) {
       setSpinning(false);
+      console.log(`Coin flip result: ${result === 0 ? "Heads" : "Tails"}`); // Лог результата монеты
       setTimeout(() => {
+        // Reset the betting state after the animation completes
+        setBet(0);
+        setChoice(null);
         dispatch(resetCoinFlipGame());
-        setCountDown(11.4);
+        setCountDown(9); // Устанавливаем countdown в соответствии с сервером
       }, 1200);
     }
   }, [result, dispatch]);
 
   useEffect(() => {
-    if (countDown > 0.1 && !spinning) {
+    if (countDown > 0 && !spinning) {
       setTimeout(() => {
         setCountDown(countDown - 0.1);
       }, 100);
@@ -118,10 +123,10 @@ const CoinFlip = () => {
           <button 
             onClick={handleBet} 
             className="p-2 border rounded bg-indigo-600 hover:bg-indigo-700 w-full mt-4" 
-            disabled={!choice || bet <= 0 || userGambled || spinning}
+            disabled={choice === null || bet <= 0 || userGambled || spinning}
           >
             {spinning ? "Spinning..."
-              : !choice ? "Choose a side"
+              : choice === null ? "Choose a side"
               : bet <= 0 ? "Place the bet value"
               : userGambled ? "You're in!"
               : "Enter the Game"}

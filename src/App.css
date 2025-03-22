@@ -8,25 +8,29 @@
   text-align: center;
   background-color: #151225;
 }
-.face {
+
+
+.coin {
+  width: 200px;
+  height: 200px;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.coin .face {
   position: absolute;
   width: 100%;
   height: 100%;
-  border-radius: 50%;
+  backface-visibility: hidden;
   background-size: cover;
 }
 
-.front {
-  transform: rotateY(180deg) translateZ(0.7em);
+.coin .face.front {
+  transform: rotateY(0deg);
+  z-index: 2; /* Красная сторона сверху */
 }
 
-.back {
-  transform: rotateY(0deg) translateZ(0.7em);
-}
-
-.coin {
-  position: relative;
-  width: 300px;
-  height: 300px;
-  transform-style: preserve-3d;
+.coin .face.back {
+  transform: rotateY(180deg);
+  z-index: 1; /* Зелёная сторона снизу */
 }

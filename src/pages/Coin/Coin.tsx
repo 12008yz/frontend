@@ -12,40 +12,32 @@ interface CoinProps {
 const Coin: React.FC<CoinProps> = ({ result, spinning }) => {
     const controls = useAnimation();
 
-  useEffect(() => {
-    const spinCoin = () => {
-      controls.stop();
-      controls.set({ rotateY: 0 });
-      controls.start({ 
-        rotateY: 3600, 
-        transition: { 
-          duration: 5, // Синхронизировано с сервером (5000 мс)
-          ease: "linear" 
-        } 
-      });
-    };
+    useEffect(() => {
+        const spinCoin = () => {
+            controls.start({ 
+                rotateY: 3600, 
+            });
+        };
 
-    const slowSpin = () => {
-      const finalRotation = result === 0 ? 3600 + 360 : 3600 + 540;
-      controls.start({ 
-        rotateY: finalRotation,
-        transition: { 
-          duration: 1.2, // Синхронизировано с обновлением истории
-          ease: [0.33, 1, 0.68, 1] 
-        } 
-      });
-    };
+        const slowSpin = () => {
+            const finalRotation = result === 0 ? 3600 + 180 : 3600 + 360; // Heads is red, Tails is green
+            controls.start({ 
+                rotateY: finalRotation,
+                transition: { 
+                    duration: 1.2, // Время вращения
+                    ease: [0.33, 1, 0.68, 1] 
+                } 
+            });
+        };
 
-    if (spinning) {
-      spinCoin();
-    } else if (result !== null) {
-      slowSpin();
-    } else {
-      // Сбрасываем анимацию, если игра не активна
-      controls.stop();
-      controls.set({ rotateY: 0 });
-    }
-  }, [spinning, result, controls]);
+        if (spinning) {
+            spinCoin();
+        } else if (result !== null) {
+            slowSpin();
+        } else {
+            controls.stop();
+        }
+    }, [spinning, result, controls]);
 
     return (
         <motion.div 
@@ -61,13 +53,13 @@ const Coin: React.FC<CoinProps> = ({ result, spinning }) => {
             <div 
                 className="face front" 
                 style={{ 
-                    backgroundImage: `url(${headsImg})`,
+                    backgroundImage: `url(${headsImg})` 
                 }} 
             />
             <div 
                 className="face back" 
                 style={{ 
-                    backgroundImage: `url(${tailsImg})`,
+                    backgroundImage: `url(${tailsImg})` 
                 }} 
             />
         </motion.div>
